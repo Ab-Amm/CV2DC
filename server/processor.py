@@ -12,8 +12,11 @@ import tempfile
 import logging
 from datetime import datetime
 from groq_parser import GroqCVParser
+from flask_cors import CORS
 
 app = Flask(__name__)
+app.debug = True
+CORS(app)
 
 # Configuration
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
@@ -392,6 +395,7 @@ def index():
 @app.route('/process', methods=['POST'])
 def process_pdf():
     """Process uploaded PDF file"""
+    logger.info("Processing PDF...")
     try:
         # Check if file is uploaded
         if 'file' not in request.files:
@@ -414,8 +418,7 @@ def process_pdf():
         
         try:
             # Process the PDF
-            parse_with_groq = request.form.get('parse_with_groq', 'false').lower() == 'true'
-            result = process_cv_pdf(filepath, parse_with_groq=parse_with_groq)
+            result = process_cv_pdf(filepath, parse_with_groq=True)
             
             # Clean up uploaded file
             os.remove(filepath)

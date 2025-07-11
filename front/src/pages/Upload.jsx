@@ -2,6 +2,10 @@ import DropzoneContainer from "../components/upload/DropZoneContainer"
 import CompanyHeader from "../components/CompanyHeader"
 
 const Upload = () => {
+
+  
+
+
   return (
     <div className="app-container">
       <CompanyHeader />
