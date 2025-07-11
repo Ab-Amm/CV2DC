@@ -306,7 +306,7 @@ def process_dc():
         logger.info(f"Saving PDF to {pdf_path}")
 
         # Generate PDF
-        HTML(string=html_out).write_pdf(pdf_path, )
+        HTML(string=html_out).write_pdf(pdf_path)
 
         logger.info(f"PDF saved to {pdf_path}")
 
