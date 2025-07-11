@@ -294,17 +294,19 @@ def process_dc():
         # Render template
         html_out = template.render(data=structured_data)
 
+        logger.info("Template rendered" + html_out)
+
         logger.info("PDF generated successfully")
 
         # Create a safe filename
         name = structured_data.get("nom", "unknown").replace(" ", "_")
-        pdf_filename = f"{name}_resume_dc.pdf"
+        pdf_filename = f"{name}_DC.pdf"
         pdf_path = os.path.join('.', 'static', 'output',  pdf_filename)  # Save in static so it can be served if needed
 
         logger.info(f"Saving PDF to {pdf_path}")
 
         # Generate PDF
-        HTML(string=html_out).write_pdf(pdf_path)
+        HTML(string=html_out).write_pdf(pdf_path, )
 
         logger.info(f"PDF saved to {pdf_path}")
 
