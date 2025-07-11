@@ -122,11 +122,49 @@ const EditFile = () => {
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const fileUrl = queryParams.get("url");
+  console.log(queryParams.get("data"));
+  const fileUrl = location?.state?.fileUrl;
+  const result = location?.state?.result;
 
-  const handleFormSubmit = (updatedData) => {
-    console.log("Updated Data:", updatedData);
-    navigate("/DCPreivew");
+  const maybeJSON = result.structured_cv;
+
+  let yourExtractedData;
+  try {
+    yourExtractedData =
+      typeof maybeJSON === "string" ? JSON.parse(maybeJSON) : maybeJSON;
+  } catch (err) {
+    console.error("Failed to parse JSON:", err);
+  }
+  console.log(yourExtractedData);
+
+  const handleFormSubmit = async (updatedData) => {
+    try {
+      console.log(" Updated data:", updatedData);
+      const response = await axios.post("http://localhost:5000/DC", {
+        structured_cv: updatedData,
+      });
+
+      console.log( "Response data:", response.data);
+
+      const { pdf_filename, pdf_base64, pdf_url } = response.data;
+
+      console.log(pdf_filename);
+      console.log(pdf_base64);
+      console.log(pdf_url);
+
+      navigate("/DCPreivew", {
+      state: {
+        pdfFilename: pdf_filename,
+        pdfBase64: pdf_base64,
+        pdfUrl: pdf_url
+      },
+    });
+
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+
   };
 
   return (

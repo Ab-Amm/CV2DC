@@ -14,7 +14,9 @@ const DCPreview = () => {
   const [scale, setScale] = useState(1.2)
 
   const location = useLocation();
-  const result = location?.state?.pdf_base64;
+  const result = location?.state?.pdfUrl;
+
+  console.log( "result:",result);
 
 
   // Mock PDF file - replace with your actual PDF source
