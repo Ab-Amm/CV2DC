@@ -1,0 +1,13 @@
+/* DropOverlay.module.css */
+.overlay {
+  padding: 40px;
+  background-color: #d8f3ff;
+  border-radius: 16px;
+  border: 2px dashed #2196f3;
+  color: #0b5394;
+}
+
+.overlayText {
+  font-size: 20px;
+  font-weight: bold;
+}

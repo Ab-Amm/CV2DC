@@ -1,0 +1,85 @@
+
+
+/* DropzoneContainer.module.css */
+.wrapper {
+  max-width: 700px;
+  margin: auto;
+}
+
+.dropzone {
+  border: 3px dashed #888;
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  color: #666;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease;
+  position: relative;
+}
+
+.text {
+  font-size: 18px;
+}
+
+.previewSection {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background-color: #fafafa;
+}
+
+.previewItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.info {
+  font-size: 14px;
+  color: #333;
+}
+
+.submitBtn {
+  margin-top: 12px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.submitBtn:hover {
+  background-color: #1976d2;
+}
+
+.placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: #eaeaea;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #666;
+}
+
+.fileIcon {
+  pointer-events: none;
+  user-select: none;
+}
+
