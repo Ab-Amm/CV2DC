@@ -277,7 +277,7 @@ def process_pdf():
     
 
 import pdfkit
-config = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
+config = pdfkit.configuration(wkhtmltopdf=os.getenv("PDF_PATH"))
 
 
 @app.route('/DC', methods=['POST'])
@@ -310,10 +310,20 @@ def process_dc():
         with open(pdf_path, 'rb') as f:
             encoded_pdf = base64.b64encode(f.read()).decode('utf-8')
 
+        logger.info("PDF generated successfully")
+        logger.info("pdf filename" + pdf_filename)
+        logger.info("pdf base64" + encoded_pdf)
+
+        pdf_url = os.path.join('static', 'output', pdf_filename)
+
+        logger.info(f"PDF URL: {pdf_url}")
+
+
         return jsonify({
             'message': 'PDF generated successfully',
             'pdf_filename': pdf_filename,
-            'pdf_base64': encoded_pdf
+            'pdf_base64': encoded_pdf,
+            'pdf_url': pdf_url
         })
 
     except Exception as e:

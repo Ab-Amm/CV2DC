@@ -28,19 +28,23 @@ const EditFile = () => {
   const handleFormSubmit = async (updatedData) => {
     try {
       console.log(" Updated data:", updatedData);
-      const response = axios.post("http://localhost:5000/DC", {
+      const response = await axios.post("http://localhost:5000/DC", {
         structured_cv: updatedData,
       });
 
       console.log( "Response data:", response.data);
 
-      const { pdf_filename, pdf_base64 } = response.data;
+      const { pdf_filename, pdf_base64, pdf_url } = response.data;
 
-      console.log(pdf_filename, pdf_base64);
-      navigate("/DCPreview", {
+      console.log(pdf_filename);
+      console.log(pdf_base64);
+      console.log(pdf_url);
+
+      navigate("/DCPreivew", {
       state: {
         pdfFilename: pdf_filename,
         pdfBase64: pdf_base64,
+        pdfUrl: pdf_url
       },
     });
 
