@@ -3,6 +3,7 @@ import JsonEditorForm from "../components/EditFile/JsonEditorForm";
 import PdfViewer from "../components/SimplePdfViewer";
 import CompanyHeader from "../components/CompanyHeader";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const EditFile = () => {
   const navigate = useNavigate();
@@ -24,9 +25,25 @@ const EditFile = () => {
   }
   console.log(yourExtractedData);
 
-  const handleFormSubmit = (updatedData) => {
-    console.log("Updated Data:", updatedData);
-    navigate("/DCPreivew");
+  const handleFormSubmit = async (updatedData) => {
+    try {
+      const response = axios.post("http://localhost:5000/DC", {
+        structured_cv: updatedData,
+      });
+
+      const { pdf_filename, pdf_base64 } = response.data;
+      navigate("/DCPreview", {
+      state: {
+        pdfFilename: pdf_filename,
+        pdfBase64: pdf_base64,
+      },
+    });
+
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+
   };
 
   return (

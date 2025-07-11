@@ -15,6 +15,8 @@ from groq_parser import GroqCVParser
 from flask_cors import CORS
 from flask_cors import CORS
 from dotenv import load_dotenv
+from jinja2 import Environment, FileSystemLoader
+from weasyprint import HTML
 load_dotenv()
 
 
@@ -230,174 +232,6 @@ def process_cv_pdf(pdf_path, parse_with_groq=True):
         logger.error(f"Error processing PDF: {e}")
         return {'error': str(e)}
 
-# HTML template for the upload form - Updated to better show formatted data
-HTML_TEMPLATE = '''
-<!DOCTYPE html>
-<html>
-<head>
-    <title>CV PDF Text Extractor</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .container { background: #f5f5f5; padding: 20px; border-radius: 10px; }
-        .result { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; }
-        .error { background: #ffebee; color: #c62828; }
-        .success { background: #e8f5e8; color: #2e7d32; }
-        .loading { text-align: center; padding: 20px; }
-        textarea { width: 100%; height: 200px; margin: 10px 0; font-family: monospace; }
-        .stats { background: #e3f2fd; padding: 10px; margin: 10px 0; border-radius: 5px; }
-        .formatted-cv { background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #007bff; }
-        .structured-cv { background: #f1f8ff; padding: 15px; border-radius: 5px; border-left: 4px solid #28a745; }
-        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 12px; }
-        .section-title { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-bottom: 10px; }
-        .json-container { max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>📄 CV PDF Text Extractor</h1>
-        <p>Upload a PDF file to extract text using EasyOCR and parse with Groq AI</p>
-        
-        <form id="uploadForm" enctype="multipart/form-data">
-            <input type="file" id="pdfFile" name="file" accept=".pdf" required>
-            <label>
-                <input type="checkbox" id="parseWithGroq" name="parse_with_groq" checked>
-                Parse with Groq AI for structured JSON
-            </label>
-            <button type="submit">Extract Text</button>
-        </form>
-        
-        <div id="loading" class="loading" style="display: none;">
-            <p>🔄 Processing PDF... This may take a few minutes.</p>
-        </div>
-        
-        <div id="result"></div>
-    </div>
-
-    <script>
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const fileInput = document.getElementById('pdfFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('Please select a PDF file');
-                return;
-            }
-            
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('parse_with_groq', document.getElementById('parseWithGroq').checked);
-            
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('result').innerHTML = '';
-            
-            try {
-                const response = await fetch('/process', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                document.getElementById('loading').style.display = 'none';
-                
-                if (data.success) {
-                    displayResults(data);
-                } else {
-                    displayError(data.error);
-                }
-                
-            } catch (error) {
-                document.getElementById('loading').style.display = 'none';
-                displayError('Error: ' + error.message);
-            }
-        });
-        
-        function displayResults(data) {
-            const resultDiv = document.getElementById('result');
-            
-            let html = '<div class="result success">';
-            html += '<h3>✅ Text Extraction Completed</h3>';
-            
-            html += '<div class="stats">';
-            html += '<h4>📊 Summary:</h4>';
-            html += '<p><strong>Pages processed:</strong> ' + data.summary.total_pages + '</p>';
-            html += '<p><strong>Text segments:</strong> ' + data.summary.total_segments + '</p>';
-            html += '<p><strong>Characters:</strong> ' + data.summary.total_characters + '</p>';
-            html += '<p><strong>Words:</strong> ' + data.summary.total_words + '</p>';
-            html += '</div>';
-            
-            // Show Groq parsing status
-            if (data.groq_parsing) {
-                if (data.groq_parsing.success) {
-                    html += '<div class="result success">';
-                    html += '<h3>🧠 Groq AI Parsing: ✅ Success</h3>';
-                    html += '</div>';
-                } else {
-                    html += '<div class="result error">';
-                    html += '<h3>🧠 Groq AI Parsing: ❌ Failed</h3>';
-                    html += '<p>Error: ' + data.groq_parsing.error + '</p>';
-                    html += '</div>';
-                }
-            }
-            
-            // Show formatted CV if available
-            if (data.formatted_cv) {
-                html += '<div class="result formatted-cv">';
-                html += '<h3 class="section-title">📋 Formatted CV Data</h3>';
-                html += '<div class="json-container">';
-                html += '<pre>' + data.formatted_cv + '</pre>';
-                html += '</div>';
-                html += '</div>';
-            }
-            
-            // Show structured CV if available
-            if (data.structured_cv) {
-                html += '<div class="result structured-cv">';
-                html += '<h3 class="section-title">🔧 Structured CV (Raw JSON)</h3>';
-                html += '<div class="json-container">';
-                html += '<pre>' + JSON.stringify(data.structured_cv, null, 2) + '</pre>';
-                html += '</div>';
-                html += '</div>';
-            }
-            
-            html += '<div class="result">';
-            html += '<h4 class="section-title">📖 Raw Extracted Text:</h4>';
-            html += '<textarea readonly>' + data.summary.full_text + '</textarea>';
-            html += '</div>';
-            
-            html += '<div class="result">';
-            html += '<h4 class="section-title">📄 Page Details:</h4>';
-            data.pages.forEach(page => {
-                html += '<div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">';
-                html += '<h5>Page ' + page.page + ' (' + page.results.total_segments + ' segments)</h5>';
-                html += '<p style="font-size: 12px; color: #666;">' + page.results.full_text + '</p>';
-                html += '</div>';
-            });
-            html += '</div>';
-            
-            html += '</div>';
-            
-            resultDiv.innerHTML = html;
-        }
-        
-        function displayError(error) {
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = '<div class="result error"><h3>❌ Error</h3><p>' + error + '</p></div>';
-        }
-    </script>
-</body>
-</html>
-'''
-
-@app.route('/')
-def index():
-    """Home page with upload form"""
-    return render_template_string(HTML_TEMPLATE)
-
-
-
 @app.route('/process', methods=['POST'])
 def process_pdf():
     """Process uploaded PDF file"""
@@ -440,6 +274,42 @@ def process_pdf():
     except Exception as e:
         logger.error(f"Error in process_pdf: {e}")
         return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/DC', methods=['POST'])
+def process_dc():
+    try:
+        data = request.get_json()
+        if not data or "structured_cv" not in data:
+            return jsonify({'error': 'Missing structured_cv in request'}), 400
+        
+        structured_data = data["structured_cv"]
+        env = Environment(loader=FileSystemLoader('./static'))
+        template = env.get_template('template.html')
+        html_out = template.render(data=structured_data)
+
+        # Create a safe filename
+        name = structured_data.get("nom", "unknown").replace(" ", "_")
+        pdf_filename = f"{name}_resume_dc.pdf"
+        pdf_path = os.path.join('static', pdf_filename)  # Save in static so it can be served if needed
+
+        # Generate PDF
+        HTML(string=html_out).write_pdf(pdf_path)
+
+        # Optional: encode as base64 to return via JSON
+        with open(pdf_path, 'rb') as f:
+            encoded_pdf = base64.b64encode(f.read()).decode('utf-8')
+
+        return jsonify({
+            'message': 'PDF generated successfully',
+            'pdf_filename': pdf_filename,
+            'pdf_base64': encoded_pdf
+        })
+
+    except Exception as e:
+        logger.error(f"Error in /DC endpoint: {e}")
+        return jsonify({'error': str(e)}), 500
+    
 
 @app.route('/health')
 def health_check():

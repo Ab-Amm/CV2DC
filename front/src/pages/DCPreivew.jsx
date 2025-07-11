@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Document, Page, pdfjs } from "react-pdf"
 import CompanyHeader from "../components/CompanyHeader"
+import { useLocation } from "react-router-dom"
 
 const workerSrc = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url).href
 pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
@@ -12,8 +13,13 @@ const DCPreview = () => {
   const [pageNumber, setPageNumber] = useState(1)
   const [scale, setScale] = useState(1.2)
 
+  const location = useLocation();
+  const result = location?.state?.pdf_base64;
+
+
   // Mock PDF file - replace with your actual PDF source
-  const pdfFile = "/Sanaa HAMDAN-CV.pdf" 
+  const pdfFile = result
+
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages)
