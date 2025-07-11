@@ -13,6 +13,7 @@ import logging
 from datetime import datetime
 from groq_parser import GroqCVParser
 from flask_cors import CORS
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.debug = True
@@ -71,7 +72,7 @@ def pdf_to_images(pdf_path, dpi=300):
         logger.info(f"Converting PDF to images: {pdf_path}")
         images = convert_from_path(pdf_path, 
                                    dpi=dpi, 
-                                   poppler_path=r'C:/Release-24.08.0-0/poppler-24.08.0/Library/bin')
+                                   poppler_path=r'C:/poppler-24.08.0/Library/bin')
         logger.info(f"Successfully converted {len(images)} page(s)")
         return images
     except Exception as e:
@@ -391,6 +392,8 @@ HTML_TEMPLATE = '''
 def index():
     """Home page with upload form"""
     return render_template_string(HTML_TEMPLATE)
+
+
 
 @app.route('/process', methods=['POST'])
 def process_pdf():
