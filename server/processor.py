@@ -276,6 +276,10 @@ def process_pdf():
         return jsonify({'error': str(e)}), 500
     
 
+import pdfkit
+config = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
+
+
 @app.route('/DC', methods=['POST'])
 def process_dc():
     try:
@@ -284,37 +288,27 @@ def process_dc():
         if not data or "structured_cv" not in data:
             return jsonify({'error': 'Missing structured_cv in request'}), 400
         
-        logger.info("Generating PDF...")
-        
         structured_data = data["structured_cv"]
         env = Environment(loader=FileSystemLoader('./static'))
         template = env.get_template('template.html')
 
-        logger.info("Rendering template... ", template)
-        # Render template
         html_out = template.render(data=structured_data)
 
-        logger.info("Template rendered" + html_out)
-
-        logger.info("PDF generated successfully")
-
-        # Create a safe filename
         name = structured_data.get("nom", "unknown").replace(" ", "_")
         pdf_filename = f"{name}_DC.pdf"
-        pdf_path = os.path.join('.', 'static', 'output',  pdf_filename)  # Save in static so it can be served if needed
+        pdf_path = os.path.join('.', 'static', 'output',  pdf_filename)
+        os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
 
-        logger.info(f"Saving PDF to {pdf_path}")
+        logger.info(f"Saving PDF to {pdf_path} using pdfkit...")
 
-        # Generate PDF
-        HTML(string=html_out).write_pdf(pdf_path, )
+        # Générer le PDF avec pdfkit
+        pdfkit.from_string(html_out, pdf_path, configuration=config)
+
 
         logger.info(f"PDF saved to {pdf_path}")
 
-        # Optional: encode as base64 to return via JSON
         with open(pdf_path, 'rb') as f:
             encoded_pdf = base64.b64encode(f.read()).decode('utf-8')
-
-        logger.info("PDF encoded as base64")
 
         return jsonify({
             'message': 'PDF generated successfully',
@@ -325,6 +319,7 @@ def process_dc():
     except Exception as e:
         logger.error(f"Error in /DC endpoint: {e}")
         return jsonify({'error': str(e)}), 500
+
     
 
 @app.route('/health')
