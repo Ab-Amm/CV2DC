@@ -73,14 +73,20 @@ class GroqCVParser:
                 
         return prompt
     
-    def extract_json_from_text(self, text: str) -> str:
-        """Extract JSON string from response text"""
+    def extract_json_from_text(self,text: str) -> str:
+        """Extract and parse the JSON object from a text response."""
         start_index = text.find('{')
-        if start_index == -1:
-            raise ValueError("No JSON object found in the input text.")
-        json_str = text[start_index:]
-        return json_str
-    
+        end_index = text.rfind('}') + 1  # Find the last closing brace
+
+        if start_index == -1 or end_index == -1:
+            raise ValueError("JSON object not found or incomplete.")
+
+        json_str = text[start_index:end_index]
+
+        try:
+            return json_str
+        except json.JSONDecodeError as e:
+            raise ValueError(f"JSON parsing failed: {e}")
     def parse_cv_text(self, extracted_text: str) -> Dict[str, Any]:
         """Parse CV text using Groq API and return structured JSON"""
         try:
@@ -102,9 +108,11 @@ class GroqCVParser:
             # Extract response
             raw_response = response.choices[0].message.content.strip()
             logger.info("Received response from Groq")
-            
+            logger.info("Groq raw Response: " + raw_response)
             # Extract JSON from response
             json_str = self.extract_json_from_text(raw_response)
+            logger.info("Extracted JSON from Groq response")
+            logger.info("Groq JSON Response: " + json_str)
             
             # Parse JSON
             try:
@@ -136,6 +144,10 @@ class GroqCVParser:
             return json.dumps(data['data'], indent=2, ensure_ascii=False)
         else:
             return json.dumps(data, indent=2, ensure_ascii=False)
+
+    def format_cv_data(self, data: Dict[str, Any]) -> str:
+        """Format CV data as JSON string - coordinated method for Flask app"""
+        return self.format_cv_json(data)
 
 # Standalone functions for easy integration
 def parse_cv_with_groq(extracted_text: str, api_key: str = None) -> Dict[str, Any]:
@@ -171,3 +183,4 @@ if __name__ == "__main__":
         if 'raw_response' in result:
             print("\nRéponse brute:")
             print(result['raw_response'])
+
