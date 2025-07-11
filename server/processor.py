@@ -279,26 +279,40 @@ def process_pdf():
 @app.route('/DC', methods=['POST'])
 def process_dc():
     try:
+        logger.info("Processing data /DC...")
         data = request.get_json()
         if not data or "structured_cv" not in data:
             return jsonify({'error': 'Missing structured_cv in request'}), 400
         
+        logger.info("Generating PDF...")
+        
         structured_data = data["structured_cv"]
         env = Environment(loader=FileSystemLoader('./static'))
         template = env.get_template('template.html')
+
+        logger.info("Rendering template... ", template)
+        # Render template
         html_out = template.render(data=structured_data)
+
+        logger.info("PDF generated successfully")
 
         # Create a safe filename
         name = structured_data.get("nom", "unknown").replace(" ", "_")
         pdf_filename = f"{name}_resume_dc.pdf"
-        pdf_path = os.path.join('static', pdf_filename)  # Save in static so it can be served if needed
+        pdf_path = os.path.join('.', 'static', 'output',  pdf_filename)  # Save in static so it can be served if needed
+
+        logger.info(f"Saving PDF to {pdf_path}")
 
         # Generate PDF
         HTML(string=html_out).write_pdf(pdf_path)
 
+        logger.info(f"PDF saved to {pdf_path}")
+
         # Optional: encode as base64 to return via JSON
         with open(pdf_path, 'rb') as f:
             encoded_pdf = base64.b64encode(f.read()).decode('utf-8')
+
+        logger.info("PDF encoded as base64")
 
         return jsonify({
             'message': 'PDF generated successfully',
