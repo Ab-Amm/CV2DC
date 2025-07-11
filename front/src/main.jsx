@@ -16,7 +16,7 @@ const router = createBrowserRouter([
     element: <EditFile />,
   },
   {
-    path: "/DCPreivew",
+    path: "/DCPreview",
     element: <DCPreview />,
   }
 ]);
