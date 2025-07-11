@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{data.nom}} Dossier Competences</title>
     <style>
-
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
       @page {
         size: A4;
         margin: 0;
@@ -26,7 +23,7 @@
         width: 210mm;
         margin: 0;
         padding: 0;
-        font-family: 'Inter',"Verdana", Arial, sans-serif;
+        font-family: "Verdana", Arial, sans-serif;
         line-height: 1.5;
         color: black;
         background: white;
@@ -46,7 +43,7 @@
         top: -55px;
         left: 0;
         width: 40px;
-        height: 100vh;
+        height: 100%;
         background: var(--primary-color);
       }
 
@@ -55,7 +52,7 @@
         background: #ffffff;
         padding: 40px 50px 60px 20px;
         margin-left: 40px; /* Space for the purple strip */
-        min-height: calc(297mm - 60px); /* A4 height minus footer space */
+        min-height: 237mm; /* A4 height minus footer space - remplace calc() */
         position: relative;
       }
 
@@ -290,7 +287,7 @@
         right: 50px;
         font-size: 10px;
         color: #666;
-        width: calc(100% - 140px);
+        width: 70mm; /* Valeur fixe au lieu de calc() */
       }
 
       .footer::after {
@@ -307,26 +304,20 @@
         float: right;
       }
 
-      /* Page break utilities
-      . {
-        
-      } */
-
       /* WeasyPrint specific optimizations */
       @media print {
         .container {
-          box-shadow: none;
           margin: 0;
           max-width: none;
         }
 
         .main-content {
-          box-shadow: none;
+          /* Supprimé box-shadow qui n'est pas supporté */
         }
 
         /* Ensure purple strip prints correctly */
         html::before {
-          height: 10000mm; /* A4 height for print */
+          height: 297mm; /* A4 height for print - valeur fixe */
         }
       }
     </style>
