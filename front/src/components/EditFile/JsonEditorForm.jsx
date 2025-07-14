@@ -1,5 +1,4 @@
-
-import { useState } from "react"
+import { useState } from "react";
 
 const initialData = {
   nom: "",
@@ -28,35 +27,105 @@ const initialData = {
   langues: [],
   competences_professionnelles: [],
   certifications: [],
-}
+};
 
 function JsonEditorForm({ data = initialData, onChange }) {
-  const [formData, setFormData] = useState(data)
+  // Ensure all arrays are properly initialized
+  const initializeData = (inputData) => {
+    return {
+      nom: inputData?.nom || "",
+      titre: inputData?.titre || "",
+      competences: {
+        langages_programmation:
+          inputData?.competences?.langages_programmation || [],
+        logiciels_techniques:
+          inputData?.competences?.logiciels_techniques || [],
+        competences_generales:
+          inputData?.competences?.competences_generales || [],
+        competences_manageriales:
+          inputData?.competences?.competences_manageriales || [],
+      },
+      experience_professionnelle: inputData?.experience_professionnelle || [
+        {
+          titre_poste: "",
+          entreprise: "",
+          periode: "",
+          description: [],
+        },
+      ],
+      formation: inputData?.formation || [
+        {
+          diplome: "",
+          etablissement: "",
+          dates: "",
+        },
+      ],
+      langues: inputData?.langues || [],
+      competences_professionnelles:
+        inputData?.competences_professionnelles || [],
+      certifications: inputData?.certifications || [],
+    };
+  };
+
+  const [formData, setFormData] = useState(initializeData(data));
+
+  const updateFormData = (newData) => {
+    setFormData(newData);
+    onChange?.(newData);
+    console.log(newData);
+  };
 
   const handleChange = (path, value) => {
-    const newData = { ...formData }
-    const keys = path.split(".")
-    let obj = newData
-    while ((keys || []).length > 1) {
-      const key = keys.shift()
-      obj = obj[key]
+    const newData = JSON.parse(JSON.stringify(formData)); // Deep clone
+    const keys = path.split(".");
+    let obj = newData;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      obj = obj[keys[i]];
     }
-    obj[keys[0]] = value
-    setFormData(newData)
-    onChange?.(newData)
-  }
+    obj[keys[keys.length - 1]] = value;
+
+    updateFormData(newData);
+  };
 
   const handleArrayChange = (path, index, value) => {
-    const keys = path.split(".")
-    const newData = { ...formData }
-    let obj = newData
-    while ((keys || []).length > 1) {
-      obj = obj[keys.shift()]
+    const newData = JSON.parse(JSON.stringify(formData)); // Deep clone
+    const keys = path.split(".");
+    let obj = newData;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      obj = obj[keys[i]];
     }
-    obj[keys[0]][index] = value
-    setFormData(newData)
-    onChange?.(newData)
-  }
+    obj[keys[keys.length - 1]][index] = value;
+
+    updateFormData(newData);
+  };
+
+  const addArrayItem = (path, item) => {
+    const newData = JSON.parse(JSON.stringify(formData)); // Deep clone
+    const keys = path.split(".");
+    let obj = newData;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      obj = obj[keys[i]];
+    }
+    obj[keys[keys.length - 1]].push(item);
+
+    updateFormData(newData);
+  };
+
+  const removeArrayItem = (path, index) => {
+    const newData = JSON.parse(JSON.stringify(formData)); // Deep clone
+    const keys = path.split(".");
+    let obj = newData;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      obj = obj[keys[i]];
+    }
+    obj[keys[keys.length - 1]].splice(index, 1);
+
+    updateFormData(newData);
+  };
 
   return (
     <div className="json-editor-form">
@@ -96,15 +165,18 @@ function JsonEditorForm({ data = initialData, onChange }) {
                     <input
                       type="text"
                       value={val}
-                      onChange={(e) => handleArrayChange(`competences.${key}`, idx, e.target.value)}
+                      onChange={(e) =>
+                        handleArrayChange(
+                          `competences.${key}`,
+                          idx,
+                          e.target.value
+                        )
+                      }
                     />
                     <button
                       type="button"
                       className="btn btn-remove"
-                      onClick={() => {
-                        const newValues = values.filter((_, i) => i !== idx)
-                        handleChange(`competences.${key}`, newValues)
-                      }}
+                      onClick={() => removeArrayItem(`competences.${key}`, idx)}
                     >
                       ×
                     </button>
@@ -113,7 +185,7 @@ function JsonEditorForm({ data = initialData, onChange }) {
                 <button
                   type="button"
                   className="btn btn-add"
-                  onClick={() => handleChange(`competences.${key}`, [...values, ""])}
+                  onClick={() => addArrayItem(`competences.${key}`, "")}
                 >
                   + Ajouter
                 </button>
@@ -136,9 +208,10 @@ function JsonEditorForm({ data = initialData, onChange }) {
                 placeholder="Titre du poste"
                 value={exp.titre_poste}
                 onChange={(e) => {
-                  const newList = [...formData.experience_professionnelle]
-                  newList[i].titre_poste = e.target.value
-                  handleChange("experience_professionnelle", newList)
+                  const newData = JSON.parse(JSON.stringify(formData));
+                  newData.experience_professionnelle[i].titre_poste =
+                    e.target.value;
+                  updateFormData(newData);
                 }}
               />
               <input
@@ -146,9 +219,10 @@ function JsonEditorForm({ data = initialData, onChange }) {
                 placeholder="Entreprise"
                 value={exp.entreprise}
                 onChange={(e) => {
-                  const newList = [...formData.experience_professionnelle]
-                  newList[i].entreprise = e.target.value
-                  handleChange("experience_professionnelle", newList)
+                  const newData = JSON.parse(JSON.stringify(formData));
+                  newData.experience_professionnelle[i].entreprise =
+                    e.target.value;
+                  updateFormData(newData);
                 }}
               />
               <div className="experience-period-full">
@@ -157,48 +231,59 @@ function JsonEditorForm({ data = initialData, onChange }) {
                   placeholder="Période"
                   value={exp.periode}
                   onChange={(e) => {
-                    const newList = [...formData.experience_professionnelle]
-                    newList[i].periode = e.target.value
-                    handleChange("experience_professionnelle", newList)
+                    const newData = JSON.parse(JSON.stringify(formData));
+                    newData.experience_professionnelle[i].periode =
+                      e.target.value;
+                    updateFormData(newData);
                   }}
                 />
               </div>
               <div className="experience-description">
                 <h5>Descriptions</h5>
                 <div className="description-items">
-                  {(exp.description || []).map((desc, j) => (
-                    <div key={j} className="description-item-row">
-                      <input
-                        className="basic-input"
-                        placeholder={`Description ${j + 1}`}
-                        value={desc}
-                        onChange={(e) => {
-                          const newList = [...formData.experience_professionnelle]
-                          newList[i].description[j] = e.target.value
-                          handleChange("experience_professionnelle", newList)
-                        }}
-                      />
-                      <button
-                        type="button"
-                        className="btn btn-remove"
-                        onClick={() => {
-                          const newList = [...formData.experience_professionnelle]
-                          newList[i].description.splice(j, 1)
-                          handleChange("experience_professionnelle", newList)
-                        }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
+                  {Array.isArray(exp.description) &&
+                    exp.description.map((desc, j) => (
+                      <div key={j} className="description-item-row">
+                        <input
+                          className="basic-input"
+                          placeholder={`Description ${j + 1}`}
+                          value={desc}
+                          onChange={(e) => {
+                            const newData = JSON.parse(
+                              JSON.stringify(formData)
+                            );
+                            newData.experience_professionnelle[i].description[
+                              j
+                            ] = e.target.value;
+                            updateFormData(newData);
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-remove"
+                          onClick={() => {
+                            const newData = JSON.parse(
+                              JSON.stringify(formData)
+                            );
+                            newData.experience_professionnelle[
+                              i
+                            ].description.splice(j, 1);
+                            updateFormData(newData);
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
                   <button
                     type="button"
                     className="btn btn-add"
                     onClick={() => {
-                      const newList = [...formData.experience_professionnelle]
-                      if (!newList[i].description) newList[i].description = []
-                      newList[i].description.push("")
-                      handleChange("experience_professionnelle", newList)
+                      const newData = JSON.parse(JSON.stringify(formData));
+                      newData.experience_professionnelle[i].description.push(
+                        ""
+                      );
+                      updateFormData(newData);
                     }}
                   >
                     + Ajouter description
@@ -211,15 +296,14 @@ function JsonEditorForm({ data = initialData, onChange }) {
         <button
           type="button"
           className="btn btn-primary"
-          onClick={() => {
-            const newExp = {
+          onClick={() =>
+            addArrayItem("experience_professionnelle", {
               titre_poste: "",
               entreprise: "",
               periode: "",
               description: [],
-            }
-            handleChange("experience_professionnelle", [...formData.experience_professionnelle, newExp])
-          }}
+            })
+          }
         >
           + Ajouter expérience
         </button>
@@ -235,9 +319,9 @@ function JsonEditorForm({ data = initialData, onChange }) {
                 placeholder="Diplôme"
                 value={f.diplome}
                 onChange={(e) => {
-                  const list = [...formData.formation]
-                  list[i].diplome = e.target.value
-                  handleChange("formation", list)
+                  const newData = JSON.parse(JSON.stringify(formData));
+                  newData.formation[i].diplome = e.target.value;
+                  updateFormData(newData);
                 }}
               />
               <input
@@ -245,9 +329,9 @@ function JsonEditorForm({ data = initialData, onChange }) {
                 placeholder="Établissement"
                 value={f.etablissement}
                 onChange={(e) => {
-                  const list = [...formData.formation]
-                  list[i].etablissement = e.target.value
-                  handleChange("formation", list)
+                  const newData = JSON.parse(JSON.stringify(formData));
+                  newData.formation[i].etablissement = e.target.value;
+                  updateFormData(newData);
                 }}
               />
               <input
@@ -255,9 +339,9 @@ function JsonEditorForm({ data = initialData, onChange }) {
                 placeholder="Dates"
                 value={f.dates}
                 onChange={(e) => {
-                  const list = [...formData.formation]
-                  list[i].dates = e.target.value
-                  handleChange("formation", list)
+                  const newData = JSON.parse(JSON.stringify(formData));
+                  newData.formation[i].dates = e.target.value;
+                  updateFormData(newData);
                 }}
               />
             </div>
@@ -266,9 +350,13 @@ function JsonEditorForm({ data = initialData, onChange }) {
         <button
           type="button"
           className="btn btn-primary"
-          onClick={() => {
-            handleChange("formation", [...formData.formation, { diplome: "", etablissement: "", dates: "" }])
-          }}
+          onClick={() =>
+            addArrayItem("formation", {
+              diplome: "",
+              etablissement: "",
+              dates: "",
+            })
+          }
         >
           + Ajouter formation
         </button>
@@ -283,15 +371,14 @@ function JsonEditorForm({ data = initialData, onChange }) {
                 type="text"
                 className="basic-input"
                 value={langue}
-                onChange={(e) => handleArrayChange("langues", i, e.target.value)}
+                onChange={(e) =>
+                  handleArrayChange("langues", i, e.target.value)
+                }
               />
               <button
                 type="button"
                 className="btn btn-remove"
-                onClick={() => {
-                  const newLangues = formData.langues.filter((_, idx) => idx !== i)
-                  handleChange("langues", newLangues)
-                }}
+                onClick={() => removeArrayItem("langues", i)}
               >
                 ×
               </button>
@@ -300,7 +387,7 @@ function JsonEditorForm({ data = initialData, onChange }) {
           <button
             type="button"
             className="btn btn-add"
-            onClick={() => handleChange("langues", [...formData.langues, ""])}
+            onClick={() => addArrayItem("langues", "")}
           >
             + Ajouter langue
           </button>
@@ -316,15 +403,20 @@ function JsonEditorForm({ data = initialData, onChange }) {
                 type="text"
                 className="basic-input"
                 value={c}
-                onChange={(e) => handleArrayChange("competences_professionnelles", i, e.target.value)}
+                onChange={(e) =>
+                  handleArrayChange(
+                    "competences_professionnelles",
+                    i,
+                    e.target.value
+                  )
+                }
               />
               <button
                 type="button"
                 className="btn btn-remove"
-                onClick={() => {
-                  const newSkills = formData.competences_professionnelles.filter((_, idx) => idx !== i)
-                  handleChange("competences_professionnelles", newSkills)
-                }}
+                onClick={() =>
+                  removeArrayItem("competences_professionnelles", i)
+                }
               >
                 ×
               </button>
@@ -333,7 +425,7 @@ function JsonEditorForm({ data = initialData, onChange }) {
           <button
             type="button"
             className="btn btn-add"
-            onClick={() => handleChange("competences_professionnelles", [...formData.competences_professionnelles, ""])}
+            onClick={() => addArrayItem("competences_professionnelles", "")}
           >
             + Ajouter compétence
           </button>
@@ -349,15 +441,14 @@ function JsonEditorForm({ data = initialData, onChange }) {
                 type="text"
                 className="basic-input"
                 value={c}
-                onChange={(e) => handleArrayChange("certifications", i, e.target.value)}
+                onChange={(e) =>
+                  handleArrayChange("certifications", i, e.target.value)
+                }
               />
               <button
                 type="button"
                 className="btn btn-remove"
-                onClick={() => {
-                  const newCerts = formData.certifications.filter((_, idx) => idx !== i)
-                  handleChange("certifications", newCerts)
-                }}
+                onClick={() => removeArrayItem("certifications", i)}
               >
                 ×
               </button>
@@ -366,14 +457,14 @@ function JsonEditorForm({ data = initialData, onChange }) {
           <button
             type="button"
             className="btn btn-add"
-            onClick={() => handleChange("certifications", [...formData.certifications, ""])}
+            onClick={() => addArrayItem("certifications", "")}
           >
             + Ajouter certification
           </button>
         </div>
       </fieldset>
     </div>
-  )
+  );
 }
 
-export default JsonEditorForm
+export default JsonEditorForm;
