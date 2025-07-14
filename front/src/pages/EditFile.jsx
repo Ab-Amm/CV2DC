@@ -4,8 +4,21 @@ import PdfViewer from "../components/SimplePdfViewer";
 import CompanyHeader from "../components/CompanyHeader";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useState } from "react";
 
 const EditFile = () => {
+
+  const createPdfUrl = (base64String) => {
+    const byteCharacters = atob(base64String);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "application/pdf" });
+    return URL.createObjectURL(blob);
+  };
+
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -25,6 +38,8 @@ const EditFile = () => {
   }
   console.log(yourExtractedData);
 
+    const [updatedData, setUpdatedData] = useState(yourExtractedData);
+
   const handleFormSubmit = async (updatedData) => {
     try {
       console.log(" Updated data:", updatedData);
@@ -32,27 +47,29 @@ const EditFile = () => {
         structured_cv: updatedData,
       });
 
-      console.log( "Response data:", response.data);
+      console.log("Response data:", response.data);
 
-      const { pdf_filename, pdf_base64, pdf_url } = response.data;
+      const pdf_base64 = response.data.pdf_base64;
+      const pdf_filename = response.data.pdf_filename;
+      let pdf_url;
+
+      pdf_url = createPdfUrl(pdf_base64);
 
       console.log(pdf_filename);
       console.log(pdf_base64);
       console.log(pdf_url);
 
-      navigate("/DCPreivew", {
-      state: {
-        pdfFilename: pdf_filename,
-        pdfBase64: pdf_base64,
-        pdfUrl: pdf_url
-      },
-    });
-
-
+      navigate("/DCPreview", {
+        state: {
+          pdfFilename: pdf_filename,
+          pdfBase64: pdf_base64,
+          pdfUrl: pdf_url,
+          nom: updatedData.nom,
+        },
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-
   };
 
   return (
@@ -66,13 +83,16 @@ const EditFile = () => {
               <div className="editor-content">
                 <JsonEditorForm
                   data={yourExtractedData}
-                  onChange={(updatedData) => console.log(updatedData)}
+                  onChange={(updatedData) => {
+                    console.log(updatedData);
+                    setUpdatedData(updatedData); // store the updated data
+                  }}
                 />
               </div>
               <div className="editor-actions">
                 <button
                   className="btn btn-submit"
-                  onClick={() => handleFormSubmit(yourExtractedData)}
+                  onClick={() => handleFormSubmit(updatedData)}
                 >
                   💾 Sauvegarder les modifications
                 </button>

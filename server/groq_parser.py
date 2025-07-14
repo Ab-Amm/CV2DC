@@ -39,7 +39,7 @@ class GroqCVParser:
             "competences_generales": [],      // e.g., "Communication", "Problem-solving"
             "competences_manageriales": []    // e.g., "Leadership", "Team management"
         }},
-        "experience_professionnelle": [
+        "experience_professionnelle": [     
             {{
             "titre_poste": "",              // Job title (include client company name if mentioned in description, typically noticed by ".... pour Toyota" or ".... pour Oracle")
             "entreprise": "",               // Company name (if separable from job title, they are often isolated, or within the job title)
@@ -159,28 +159,3 @@ def format_cv_data(data: Dict[str, Any]) -> str:
     """Format CV data as JSON string - standalone function"""
     parser = GroqCVParser()
     return parser.format_cv_json(data)
-
-# Example usage and testing
-if __name__ == "__main__":
-    # Example extracted text (you would replace this with actual OCR output)
-    sample_text = """
-    Yassine Mourhri AV Moulay Drisso 81, Dradeb, Tanger 06 78 50 28 05 Yassine_mourhri@live fr Né le 07/09/1992 Formation universitaire 2015-2016 Master en E-Logistique et supply chain durable L'université de Versailles ST-Quentin (SUPTEM-BMHS) ~Tanger 2013-2015 Master en Finance; Audit et Contrôle de Gestion L'Ecole Supérieure des Sciences Techniques et de Management (SUPTEM-BMHS) ~Tanger 2010-2013 Licence en Management L'Ecole Supérieure des Sciences Techniques et de Management (SUPTEM-BMHS) ~Tanger 2009-2010 Baccalauréat en sciences économiques Lycée MOULAY RACHID, Chefchaouen. Expérience professionnelle 2018/Aujourdhui Chef de Service Achat au sein dACOME MAROC Tanger ~Gérer, optimiser Pachat et lapprovisionnement, en vue dobtenir les meilleures conditions -Traiter des demandes dachat. ~Lancer des appels doffres auprès des fournisseurs: ~Réaliser des études financières et techniques des offres. ~Evaluer les propositions des fournisseurs (Benchmark) ~Gérer le portefeuille fournisseur (locaux et étrangers). ~Passer les commandes et assurer le suivi des livraisons. ~Garantir Pinterface clients internes et fournisseurs. ~Suivre les contrats (qualité, délais; livraison; paiement) en lien avec les différents intervenants (fournisseurs, autres services internes). ~Résoudre les éventuels litiges commerciaux et financiers avec les fournisseurs. ~Assurer une veille sur le marché. -Assurer le suivi des indicateurs et Pélaboration des reportings mensuels. 2017/2018 Stage de perfection de 7 mois au sein dACOME MAROC _ Tanger ~Participer aux travaux dinventaire ~Assurer la comptabilisation des factures ~Elaborer les Reportings du CA hebdomadaires ~Participer à Pélaboration du FOND HASSAN 2 ~Préparer les virements ~Assurer la facturation 2015/2016 ~Stage de fin détude de trois mois au sein dELTOROTRANS SAR - Tanger ~Optimiser la fonction achat dans la logistique automobile au niveau de Tanger 2014/2015 Stage dapplication de deux mois au sein de LEAR AS- Tanger ~Auditer et réaliser le contrôle interne du achat 2012/2013 Stage de fin détude de deux mois au sein d'Attijariwafa Bank ~Réaliser une étude de satisfaction des clients de Pagence Rue de Belgique Compétences_Techniques_ ~Techniques d'achats Techniques de négociation ~Normes et procédures achats ~Audit interne Compétences informatiques Bureautique: Pack Office SAP MS Project_ sphinx - Sage comptabilité 100 MFGPRO- GANTT project. Compétences linguistiques Arabe; Français, Anglais et EspagnoL. Autres renseignements personnels Loisirs sport (basket-ball, natation; musculation) voyages. Esprit de travail en équipe et esprit associatif. Réalisation de divers projets au des étudiants de SUPTEM cycle profit
-    """
-    
-    # Test the parser
-    parser = GroqCVParser()
-    result = parser.parse_cv_text(sample_text)
-    
-    print("🧠 RÉSULTAT DE L'EXTRACTION JSON:")
-    print("=" * 50)
-    
-    if result['success']:
-        print("✅ Extraction réussie!")
-        print(json.dumps(result['data'], indent=2, ensure_ascii=False))
-    else:
-        print("❌ Erreur lors de l'extraction:")
-        print(result['error'])
-        if 'raw_response' in result:
-            print("\nRéponse brute:")
-            print(result['raw_response'])
-

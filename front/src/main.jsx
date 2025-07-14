@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import EditFile from "./pages/EditFile";
-import DCPreview from "./pages/DCPreivew";
+import DCPreview from "./pages/DCPreview.jsx";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -16,7 +16,7 @@ const router = createBrowserRouter([
     element: <EditFile />,
   },
   {
-    path: "/DCPreivew",
+    path: "/DCPreview",
     element: <DCPreview />,
   }
 ]);

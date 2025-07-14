@@ -302,7 +302,17 @@ def process_dc():
         logger.info(f"Saving PDF to {pdf_path} using pdfkit...")
 
         # Générer le PDF avec pdfkit
-        pdfkit.from_string(html_out, pdf_path, configuration=config)
+        options = {
+            'enable-local-file-access': None,
+            'margin-top': '0mm',
+            'margin-right': '0mm',
+            'margin-bottom': '0mm',
+            'margin-left': '0mm',
+            'page-size': 'A4'
+        }
+
+        css = os.path.abspath("static/styles.css")
+        pdfkit.from_string(html_out, pdf_path, configuration=config, css=css, options=options)
 
 
         logger.info(f"PDF saved to {pdf_path}")
