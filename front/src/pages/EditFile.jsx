@@ -30,7 +30,8 @@ const EditFile = () => {
 
   const maybeJSON = result.structured_cv;
 
-  let yourExtractedData;
+  let yourExtractedData
+
   try {
     yourExtractedData =
       typeof maybeJSON === "string" ? JSON.parse(maybeJSON) : maybeJSON;
