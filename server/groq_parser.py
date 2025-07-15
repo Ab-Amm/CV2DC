@@ -32,7 +32,7 @@ class GroqCVParser:
 
         {{
         "nom": "",                          // Format: first initial + dot + space + first three letters of last name (e.g., "S. CHA" for Soufiane Chaker)
-        "titre": "",                        // Generate it based on the overall information at hand
+        "titre": "",                        // Generate it based on the overall information at hand if not found in the text
         "competences": {{
             "langages_programmation": [],     // e.g., "Python", "Java"
             "logiciels_techniques": [],       // e.g., "AutoCAD", "Tableau"
@@ -44,7 +44,7 @@ class GroqCVParser:
             "titre_poste": "",              // Job title (include client company name if mentioned in description, typically noticed by ".... pour Toyota" or ".... pour Oracle")
             "entreprise": "",               // Company name (if separable from job title, they are often isolated, or within the job title)
             "periode": "",                  // Duration or date range
-            "description": ""               // Tasks or responsibilities, into bullet points
+            "description": ""               // All Tasks or responsibilities, into bullet points
             }}
         ],
         "formation": [

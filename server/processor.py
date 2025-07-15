@@ -8,15 +8,14 @@ import os
 import io
 import base64
 from werkzeug.utils import secure_filename
-import tempfile
 import logging
 from datetime import datetime
 from groq_parser import GroqCVParser
 from flask_cors import CORS
-from flask_cors import CORS
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
+import pdfkit
 load_dotenv()
 
 
@@ -276,7 +275,7 @@ def process_pdf():
         return jsonify({'error': str(e)}), 500
     
 
-import pdfkit
+
 config = pdfkit.configuration(wkhtmltopdf=os.getenv("PDF_PATH"))
 
 
