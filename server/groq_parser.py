@@ -38,6 +38,7 @@ class GroqCVParser:
             "logiciels_techniques": [],       // e.g., "AutoCAD", "Tableau"
             "competences_generales": [],      // e.g., "Communication", "Problem-solving"
             "competences_manageriales": []    // e.g., "Leadership", "Team management"
+            "autres": []                      // e.g., "Leadership", "Team management"
         }},
         "experience_professionnelle": [     
             {{

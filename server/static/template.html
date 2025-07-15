@@ -10,7 +10,6 @@
     <div class="purple-strip"></div>
     <div class="spacer"></div>
 
-
     <div class="main-content">
       <div class="header">
         <div class="expleo-brand">
@@ -33,6 +32,7 @@
           {{ data.titre | default("Titre non spécifié", true) }}
         </div>
       </div>
+      
       <div class="section">
         <div class="section-title">Compétences</div>
 
@@ -43,43 +43,53 @@
             {{ data.competences.langages_programmation | join(', ') }}
           </div>
         </div>
-        {% endif %} {% if data.competences and
-        data.competences.logiciels_techniques %}
+        {% endif %}
+        
+        {% if data.competences and data.competences.logiciels_techniques %}
         <div class="skills-category">
           <div class="skills-category-title">Logiciels Techniques :</div>
           <div class="skills-list">
             {{ data.competences.logiciels_techniques | join(', ') }}
           </div>
         </div>
-        {% endif %} {% if data.competences and
-        data.competences.competences_generales %}
+        {% endif %}
+        
+        {% if data.competences and data.competences.competences_generales %}
         <div class="skills-category">
           <div class="skills-category-title">Compétences Générales :</div>
           <div class="skills-list">
             {{ data.competences.competences_generales | join(', ') }}
           </div>
         </div>
-        {% endif %} {% if data.competences and
-        data.competences.competences_manageriales %}
+        {% endif %}
+        
+        {% if data.competences and data.competences.competences_manageriales %}
         <div class="skills-category">
           <div class="skills-category-title">Compétences Managériales :</div>
           <div class="skills-list">
             {{ data.competences.competences_manageriales | join(', ') }}
           </div>
         </div>
-        {% endif %} {% if not data.competences or ( not
-        data.competences.langages_programmation and not
-        data.competences.logiciels_techniques and not
-        data.competences.competences_generales and not
-        data.competences.competences_manageriales ) %}
+        {% endif %}
+        
+        {% if data.competences and data.competences.autres %}
+        <div class="skills-category">
+          <div class="skills-category-title">Autres Compétences :</div>
+          <div class="skills-list">
+            {{ data.competences.autres | join(', ') }}
+          </div>
+        </div>
+        {% endif %}
+        
+        {% if not data.competences or ( not data.competences.langages_programmation and not data.competences.logiciels_techniques and not data.competences.competences_generales and not data.competences.competences_manageriales and not data.competences.autres ) %}
         <div class="no-data">Aucune compétence renseignée</div>
         {% endif %}
       </div>
 
       <div class="section">
         <div class="section-title">Expériences</div>
-        {% if data.experience_professionnelle %} {% for exp in
-        data.experience_professionnelle %}
+        {% if data.experience_professionnelle %} 
+        {% for exp in data.experience_professionnelle %}
         <div class="experience-item">
           <div class="experience-date">
             {{ exp.periode | default("xx/xx/xxxx", true) }}
@@ -94,23 +104,24 @@
               </div>
             </div>
             {% if exp.description %}
-            <ul class="experience-tasks">
-              {% for task in exp.description %}
-              <li>{{ task }}</li>
-              {% endfor %}
-            </ul>
+            <div class="experience-description">
+              {{ exp.description }}
+            </div>
             {% else %}
             <div class="no-data">Aucune description disponible</div>
             {% endif %}
           </div>
         </div>
-        {% endfor %} {% else %}
+        {% endfor %} 
+        {% else %}
         <div class="no-data">Aucune expérience professionnelle renseignée</div>
         {% endif %}
       </div>
+      
       <div class="section">
-        <div class="section-title">Éducation</div>
-        {% if data.formation %} {% for edu in data.formation %}
+        <div class="section-title">Formation</div>
+        {% if data.formation %} 
+        {% for edu in data.formation %}
         <div class="education-item">
           <div class="education-year">
             {{ edu.dates | default("Dates non spécifiées", true) }} :
@@ -118,18 +129,18 @@
           <div class="education-degree">
             {{ edu.diplome | default("Diplôme non spécifié", true) }}
           </div>
-
           <div class="education-institution">
             <b>
-              {{ edu.etablissement | default("Établissement non spécifié", true)
-              }}</b
-            >
+              {{ edu.etablissement | default("Établissement non spécifié", true) }}
+            </b>
           </div>
         </div>
-        {% endfor %} {% else %}
+        {% endfor %} 
+        {% else %}
         <div class="no-data">Aucune formation renseignée</div>
         {% endif %}
       </div>
+      
       <div class="section">
         <div class="section-title">Langues</div>
         {% if data.langues %}
@@ -142,7 +153,34 @@
         <div class="no-data">Aucune langue renseignée</div>
         {% endif %}
       </div>
+      
+      <div class="section">
+        <div class="section-title">Compétences Professionnelles</div>
+        {% if data.competences_professionnelles %}
+        <ul class="professional-skills-list">
+          {% for competence in data.competences_professionnelles %}
+          <li>{{ competence }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="no-data">Aucune compétence professionnelle renseignée</div>
+        {% endif %}
+      </div>
+      
+      <div class="section">
+        <div class="section-title">Certifications</div>
+        {% if data.certifications %}
+        <ul class="certifications-list">
+          {% for certification in data.certifications %}
+          <li>{{ certification }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="no-data">Aucune certification renseignée</div>
+        {% endif %}
+      </div>
     </div>
+    
     <div class="footer">
       <div>EXPLEO Internal</div>
       <div>Expleo</div>
