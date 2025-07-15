@@ -151,13 +151,39 @@ body {
   font-weight: normal;
 }
 
+
+.certifications-list {
+  margin-top: 10px;
+  list-style: none;
+  padding-left: 0;
+}
+
+.certifications-list li {
+  margin-bottom: 8px;
+  padding-left: 15px;
+  position: relative;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.certifications-list li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #000000;
+  font-weight: normal;
+}
+
+
 /* Experience */
 .experience-item {
   margin-bottom: 30px;
   position: relative;
   padding-left: 25px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
   page-break-inside: avoid;
   break-inside: avoid;
   display: block;
@@ -190,6 +216,26 @@ body {
   font-weight: 600;
   margin-bottom: 5px;
 }
+
+.experience-item {
+  overflow: auto; /* Ensures float containment */
+  margin-bottom: 30px;
+  padding-left: 25px;
+  position: relative;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.experience-date {
+  float: left;
+  width: 30%;
+}
+
+.experience-info {
+  float: right;
+  width: 65%;
+}
+
 
 .experience-title {
   font-size: 18px;

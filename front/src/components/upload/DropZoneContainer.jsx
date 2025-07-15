@@ -43,7 +43,7 @@ function DropzoneContainer() {
       setUploadProgress(20);
       setUploadStatus("Téléchargement en cours...");
       const response = await axios.post(
-        "http://localhost:5000/process",
+        "http://backend:5000/process",
         formData,
         {
           headers: {

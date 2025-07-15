@@ -40,12 +40,14 @@ const EditFile = () => {
   }
   console.log(yourExtractedData);
 
-    const [updatedData, setUpdatedData] = useState(yourExtractedData);
+  const [updatedData, setUpdatedData] = useState(yourExtractedData);
+
+  console.log(updatedData);
 
   const handleFormSubmit = async (updatedData) => {
     try {
       console.log(" Updated data:", updatedData);
-      const response = await axios.post("http://localhost:5000/DC", {
+      const response = await axios.post("http://backend:5000/DC", {
         structured_cv: updatedData,
       });
 
@@ -60,6 +62,9 @@ const EditFile = () => {
       console.log(pdf_filename);
       console.log(pdf_base64);
       console.log(pdf_url);
+
+      console.log("Updated data:", updatedData);
+
 
       navigate("/DCPreview", {
         state: {

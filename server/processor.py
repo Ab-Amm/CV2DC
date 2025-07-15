@@ -19,7 +19,7 @@ import pdfkit
 load_dotenv()
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../frontend/build", static_url_path="/")
 app.debug = True
 CORS(app)
 
@@ -275,8 +275,8 @@ def process_pdf():
         return jsonify({'error': str(e)}), 500
     
 
-
-config = pdfkit.configuration(wkhtmltopdf=os.getenv("PDF_PATH"))
+import pdfkit
+config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
 
 
 @app.route('/DC', methods=['POST'])
@@ -290,6 +290,9 @@ def process_dc():
         structured_data = data["structured_cv"]
         env = Environment(loader=FileSystemLoader('./static'))
         template = env.get_template('template.html')
+
+        logger.info("Rendering template...")
+        logger.info("Structured Data: " + str(structured_data))
 
         html_out = template.render(data=structured_data)
 
@@ -321,7 +324,6 @@ def process_dc():
 
         logger.info("PDF generated successfully")
         logger.info("pdf filename" + pdf_filename)
-        logger.info("pdf base64" + encoded_pdf)
 
         pdf_url = os.path.join('static', 'output', pdf_filename)
 
