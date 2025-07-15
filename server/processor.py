@@ -276,7 +276,8 @@ def process_pdf():
     
 
 import pdfkit
-config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
+config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+
 
 
 @app.route('/DC', methods=['POST'])
