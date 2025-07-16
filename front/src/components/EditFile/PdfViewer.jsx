@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { Document, Page, pdfjs } from "react-pdf"
 
-const workerSrc = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url).href
-pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
+pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+
 
 function PdfViewer({ file }) {
   const [numPages, setNumPages] = useState(null)

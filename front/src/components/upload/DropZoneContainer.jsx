@@ -30,6 +30,7 @@ function DropzoneContainer() {
 
     const file = files[0];
     const fileUrl = URL.createObjectURL(file);
+    console.log("file url",fileUrl)
 
     const formData = new FormData();
     formData.append("file", file);

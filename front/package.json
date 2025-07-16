@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run copy-worker && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "copy-worker": "cp node_modules/pdfjs-dist/build/pdf.worker.min.mjs public/"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -33,4 +34,5 @@
     "globals": "^16.3.0",
     "vite": "^7.0.3"
   }
+
 }
