@@ -75,8 +75,9 @@ def pdf_to_images(pdf_path, dpi=300):
     try:
         logger.info(f"Converting PDF to images: {pdf_path}")
         images = convert_from_path(pdf_path, 
-                                   dpi=dpi, 
-                                   poppler_path=os.getenv("POPPLER_PATH"))
+                           dpi=dpi, 
+                           poppler_path="/usr/bin")
+
         logger.info(f"Successfully converted {len(images)} page(s)")
         return images
     except Exception as e:
@@ -112,6 +113,8 @@ def preprocess_image(image):
         logger.error(f"Error preprocessing image: {e}")
         return None
 
+import numpy as np
+
 def extract_text_with_easyocr(image, confidence_threshold=0.5):
     """Extract text using EasyOCR"""
     try:
@@ -120,19 +123,22 @@ def extract_text_with_easyocr(image, confidence_threshold=0.5):
             initialize_ocr()
         
         logger.info("Extracting text with EasyOCR...")
-        results = reader.readtext(image, detail=1)
-        
-        # Filter results by confidence
+
+        image_array = np.array(image)  # Convert PIL image to NumPy array
+        results = reader.readtext(image_array, detail=1)
+        logger.info("Finished reading text.")
+
         filtered_results = [
-            (bbox, text, confidence) 
-            for bbox, text, confidence in results 
+            (bbox, text, confidence)
+            for bbox, text, confidence in results
             if confidence > confidence_threshold
         ]
-        
+
         return filtered_results
     except Exception as e:
         logger.error(f"Error extracting text: {e}")
         return []
+
 
 def format_extracted_text(results):
     """Format extracted text"""

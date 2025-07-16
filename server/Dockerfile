@@ -18,6 +18,17 @@ RUN apt-get update && apt-get install -y \
   libssl-dev \
   && apt-get clean
 
+
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libfontconfig1 \
+    fonts-dejavu \
+    && apt-get clean
+
 # Install wkhtmltopdf
 RUN apt-get update && \
     apt-get install -y wkhtmltopdf
