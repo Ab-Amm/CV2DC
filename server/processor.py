@@ -345,51 +345,83 @@ def process_dc():
 def convert_to_docx():
     logger.info("Converting PDF to DOCX...")
     try:
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No JSON data provided"}), 400
-        logger.info(f"Received data: {data}")
+        # Check if it's a file upload or URL
+        if 'pdf_file' in request.files:
+            # Handle file upload
+            file = request.files['pdf_file']
+            if file.filename == '':
+                return jsonify({"error": "No file selected"}), 400
             
-        pdf_url = data.get("pdfUrl")
-        if not pdf_url:
-            return jsonify({"error": "Missing pdfUrl"}), 400
+            # Validate file type
+            if not file.filename.lower().endswith('.pdf'):
+                return jsonify({"error": "File must be a PDF"}), 400
+            
+            # Save uploaded file temporarily
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            temp_filename = f"temp_{timestamp}.pdf"
+            temp_dir = "temp"
+            os.makedirs(temp_dir, exist_ok=True)
+            temp_filepath = os.path.join(temp_dir, temp_filename)
+            
+            file.save(temp_filepath)
+            logger.info(f"Saved temporary file: {temp_filepath}")
+            
+            # Convert using file path
+            converter = ExportPDFToDOCX()
+            output_path = converter.convert_pdf_file_to_docx(temp_filepath)
+            
+            # Clean up temp file
+            if os.path.exists(temp_filepath):
+                os.remove(temp_filepath)
+                
+        else:
+            # Handle URL (existing logic)
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "No JSON data provided"}), 400
+            
+            pdf_url = data.get("pdfUrl")
+            if not pdf_url:
+                return jsonify({"error": "Missing pdfUrl"}), 400
+            
+            logger.info(f"PDF URL: {pdf_url}")
+            
+            # Handle blob URLs - they won't work from server
+            if pdf_url.startswith('blob:'):
+                return jsonify({
+                    "error": "Blob URLs cannot be accessed from server. Please upload the PDF file directly."
+                }), 400
+            
+            # Remove blob: prefix if somehow still present
+            if pdf_url.startswith('blob:'):
+                pdf_url = pdf_url[5:]
+            
+            # Validate URL format
+            if not pdf_url.startswith(('http://', 'https://')):
+                return jsonify({"error": "Invalid URL format"}), 400
+            
+            logger.info("Converting PDF...")
+            converter = ExportPDFToDOCX()
+            output_path = converter.convert_pdf_to_docx(pdf_url)
         
-        logger.info(f"PDF URL: {pdf_url}")
-
-        pdf_url = pdf_url[5:]
-        
-
-        # Validate URL format
-        if not pdf_url.startswith(('http://', 'https://')):
-            return jsonify({"error": "Invalid URL format"}), 400
-        
-        logger.info("Converting PDF...")
-        
-
-
-        converter = ExportPDFToDOCX()
-
-        output_path = converter.convert_pdf_to_docx(pdf_url)
-
         logger.info(f"Conversion completed. Output file: {output_path}")
-
+        
         # Check if file exists before sending
         if not os.path.exists(output_path):
             return jsonify({"error": "Conversion failed - output file not found"}), 500
         
         logger.info(f"Sending file: {output_path}")
-
+        
         return send_file(
-            output_path, 
+            output_path,
             as_attachment=True,
             download_name=f"converted_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx",
             mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         )
-
+    
     except Exception as e:
         logging.exception("Error in convert_to_docx endpoint")
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
-
 
 
 @app.route('/health')
