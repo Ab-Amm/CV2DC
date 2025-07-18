@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import CompanyHeader from "../components/CompanyHeader";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 const workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -15,15 +16,16 @@ const DCPreview = () => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [scale, setScale] = useState(1.2);
+  const [isConverting, setIsConverting] = useState(false);
 
   const location = useLocation();
   const result = location?.state?.pdfUrl;
   const nom = location?.state?.nom;
+  const pdfFilename = location?.state?.pdfFilename;
 
   console.log("nom:", nom);
-
   console.log("result:", result);
-
+  console.log("pdfFilename:", pdfFilename);
 
   const pdfFile = result;
 
@@ -44,6 +46,53 @@ const DCPreview = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleConvertToWord = async () => {
+    if (!pdfFilename) {
+      alert("Nom du fichier PDF non disponible");
+      return;
+    }
+
+    setIsConverting(true);
+    try {
+      console.log("Converting to Word...");
+      const response = await axios.post("http://localhost:5000/convert-to-word", {
+        pdf_filename: pdfFilename,
+      });
+
+      console.log("Word conversion response:", response.data);
+
+      const { word_base64, word_filename } = response.data;
+
+      // Créer un blob à partir du base64
+      const byteCharacters = atob(word_base64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { 
+        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
+      });
+
+      // Créer un lien de téléchargement
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `DC_${nom}.docx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Nettoyer l'URL de l'objet
+      URL.revokeObjectURL(link.href);
+
+    } catch (error) {
+      console.error("Error converting to Word:", error);
+      alert("Erreur lors de la conversion en Word: " + error.message);
+    } finally {
+      setIsConverting(false);
+    }
   };
 
   const handleZoomIn = () => setScale((prev) => Math.min(prev + 0.2, 2.0));
@@ -160,6 +209,14 @@ const DCPreview = () => {
             <button className="btn btn-primary" onClick={handleDownload}>
               <span className="download-icon">📥</span>
               Télécharger le CV
+            </button>
+            <button 
+              className="btn btn-secondary" 
+              onClick={handleConvertToWord}
+              disabled={isConverting}
+            >
+              <span className="download-icon">📝</span>
+              {isConverting ? "Conversion en cours..." : "Télécharger en Word"}
             </button>
           </div>
         </div>

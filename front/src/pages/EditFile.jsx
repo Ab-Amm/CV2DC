@@ -1,4 +1,5 @@
 "use client";
+
 import JsonEditorForm from "../components/EditFile/JsonEditorForm";
 import PdfViewer from "../components/SimplePdfViewer";
 import CompanyHeader from "../components/CompanyHeader";
@@ -7,7 +8,6 @@ import axios from "axios";
 import { useState } from "react";
 
 const EditFile = () => {
-
   const createPdfUrl = (base64String) => {
     const byteCharacters = atob(base64String);
     const byteNumbers = new Array(byteCharacters.length);
@@ -21,7 +21,6 @@ const EditFile = () => {
 
   const navigate = useNavigate();
 
-
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   console.log(queryParams.get("data"));
@@ -30,8 +29,7 @@ const EditFile = () => {
 
   const maybeJSON = result.structured_cv;
 
-  let yourExtractedData
-
+  let yourExtractedData;
   try {
     yourExtractedData =
       typeof maybeJSON === "string" ? JSON.parse(maybeJSON) : maybeJSON;
@@ -40,7 +38,7 @@ const EditFile = () => {
   }
   console.log(yourExtractedData);
 
-    const [updatedData, setUpdatedData] = useState(yourExtractedData);
+  const [updatedData, setUpdatedData] = useState(yourExtractedData);
 
   const handleFormSubmit = async (updatedData) => {
     try {
@@ -63,7 +61,7 @@ const EditFile = () => {
 
       navigate("/DCPreview", {
         state: {
-          pdfFilename: pdf_filename,
+          pdfFilename: pdf_filename,  // Ajout du nom du fichier PDF
           pdfBase64: pdf_base64,
           pdfUrl: pdf_url,
           nom: updatedData.nom,

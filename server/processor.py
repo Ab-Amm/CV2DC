@@ -15,7 +15,9 @@ from groq_parser import GeminiCVParser
 from flask_cors import CORS
 from flask_cors import CORS
 from dotenv import load_dotenv
+import subprocess
 from jinja2 import Environment, FileSystemLoader
+from pdf2docx import Converter
 from weasyprint import HTML
 load_dotenv()
 
@@ -339,7 +341,64 @@ def process_dc():
         logger.error(f"Error in /DC endpoint: {e}")
         return jsonify({'error': str(e)}), 500
 
-    
+
+
+@app.route('/convert-to-word', methods=['POST'])
+def convert_to_word():
+    """Convertir un fichier PDF en Word en conservant la mise en forme (via LibreOffice)"""
+    try:
+        logger.info("Conversion du PDF vers Word avec préservation de la mise en forme...")
+        data = request.get_json()
+
+        if not data or "pdf_filename" not in data:
+            return jsonify({'error': 'Le champ pdf_filename est requis.'}), 400
+
+        pdf_filename = data["pdf_filename"]
+        pdf_path = os.path.join('.', 'static', 'output', pdf_filename)
+
+        # Vérifier si le fichier PDF existe
+        if not os.path.exists(pdf_path):
+            return jsonify({'error': 'Fichier PDF introuvable'}), 404
+
+        # Nom du fichier Word généré
+        word_filename = pdf_filename.replace('.pdf', '.docx')
+        word_path = os.path.join('.', 'static', 'output', word_filename)
+
+        # Commande LibreOffice pour convertir PDF en DOCX
+        libreoffice_path = os.getenv("OFFIC_PATH")
+
+        convert_command = [
+            libreoffice_path,
+            '--headless',
+            '--convert-to', 'docx',
+            '--outdir', os.path.join('.', 'static', 'output'),
+            pdf_path
+        ]
+
+        subprocess.run(convert_command, check=True)
+
+        logger.info(f"Fichier Word sauvegardé dans : {word_path}")
+
+        # Lire et encoder en base64
+        with open(word_path, 'rb') as f:
+            encoded_word = base64.b64encode(f.read()).decode('utf-8')
+
+        # Optionnel : supprimer le fichier Word après encodage
+        # os.remove(word_path)
+
+        return jsonify({
+            'message': 'Document Word généré avec succès (format préservé)',
+            'word_filename': word_filename,
+            'word_base64': encoded_word
+        })
+
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Erreur lors de la conversion LibreOffice : {e}")
+        return jsonify({'error': 'Erreur lors de la conversion avec LibreOffice'}), 500
+
+    except Exception as e:
+        logger.error(f"Erreur interne : {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/health')
 def health_check():
