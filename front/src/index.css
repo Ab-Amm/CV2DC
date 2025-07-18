@@ -2465,3 +2465,85 @@ body {
 .loading-content.error .progress-fill {
   background: var(--error);
 }
+/* Add these styles to your existing CSS */
+
+.download-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-word {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-word:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.btn-word:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #059669;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  background-color: #047857;
+}
+
+.download-icon {
+  font-size: 16px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .download-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-word,
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+}

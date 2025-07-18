@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import CompanyHeader from "../components/CompanyHeader";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
+let log = console.log;
 
 const workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -15,15 +17,14 @@ const DCPreview = () => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [scale, setScale] = useState(1.2);
+  const [isDownloadingWord, setIsDownloadingWord] = useState(false);
 
   const location = useLocation();
   const result = location?.state?.pdfUrl;
   const nom = location?.state?.nom;
 
   console.log("nom:", nom);
-
   console.log("result:", result);
-
 
   const pdfFile = result;
 
@@ -46,6 +47,68 @@ const DCPreview = () => {
     document.body.removeChild(link);
   };
 
+const handleWordDownload = async () => {
+  if (!pdfFile) {
+    alert("Fichier PDF non trouvé.");
+    return;
+  }
+
+  setIsDownloadingWord(true);
+
+  try {
+    log("Downloading Word...");
+    const response = await axios.post(
+      "http://localhost:5000/convert-to-docx",
+      { pdfUrl: pdfFile },
+      { 
+        responseType: "blob",
+        timeout: 60000, // 60 seconds timeout
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    log("Word downloaded successfully.");
+
+    // Check if response is actually a blob (successful conversion)
+    if (response.data instanceof Blob) {
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `DC_${nom || "converted"}_${new Date().toISOString().slice(0, 10)}.docx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      // Optional: Show success message
+      console.log("Document Word téléchargé avec succès");
+    } else {
+      throw new Error("Invalid response format");
+    }
+
+  } catch (error) {
+    console.error("Erreur lors du téléchargement Word:", error);
+    
+    // Better error handling
+    if (error.response?.status === 400) {
+      alert("Erreur: URL PDF invalide ou données manquantes.");
+    } else if (error.response?.status === 500) {
+      alert("Erreur serveur lors de la conversion. Veuillez réessayer.");
+    } else if (error.code === 'ECONNABORTED') {
+      alert("Timeout: La conversion prend trop de temps. Veuillez réessayer.");
+    } else {
+      alert("Échec de la génération du document Word. Veuillez vérifier votre connexion.");
+    }
+  } finally {
+    setIsDownloadingWord(false);
+  }
+};
   const handleZoomIn = () => setScale((prev) => Math.min(prev + 0.2, 2.0));
   const handleZoomOut = () => setScale((prev) => Math.max(prev - 0.2, 0.6));
   const handleResetZoom = () => setScale(1.2);
@@ -157,10 +220,20 @@ const DCPreview = () => {
             >
               ← Retour à l'édition
             </button>
-            <button className="btn btn-primary" onClick={handleDownload}>
-              <span className="download-icon">📥</span>
-              Télécharger le CV
-            </button>
+            <div className="download-buttons">
+              <button className="btn btn-primary" onClick={handleDownload}>
+                <span className="download-icon">📥</span>
+                Télécharger PDF
+              </button>
+              <button 
+                className="btn btn-primary btn-word" 
+                onClick={handleWordDownload}
+                disabled={isDownloadingWord}
+              >
+                <span className="download-icon">📄</span>
+                {isDownloadingWord ? 'Génération...' : 'Télécharger Word'}
+              </button>
+            </div>
           </div>
         </div>
       </div>

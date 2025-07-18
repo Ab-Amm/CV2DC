@@ -67,6 +67,7 @@ const EditFile = () => {
           pdfBase64: pdf_base64,
           pdfUrl: pdf_url,
           nom: updatedData.nom,
+          structuredData: updatedData
         },
       });
     } catch (error) {

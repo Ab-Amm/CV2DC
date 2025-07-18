@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify, send_file
 import easyocr
 import cv2
 import numpy as np
@@ -17,6 +17,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
+from ExportPDFToDOCX import ExportPDFToDOCX
 load_dotenv()
 
 
@@ -280,6 +281,7 @@ import pdfkit
 config = pdfkit.configuration(wkhtmltopdf=os.getenv("PDF_PATH"))
 
 
+
 @app.route('/DC', methods=['POST'])
 def process_dc():
     try:
@@ -339,7 +341,56 @@ def process_dc():
         logger.error(f"Error in /DC endpoint: {e}")
         return jsonify({'error': str(e)}), 500
 
-    
+@app.route('/convert-to-docx', methods=['POST'])
+def convert_to_docx():
+    logger.info("Converting PDF to DOCX...")
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+        logger.info(f"Received data: {data}")
+            
+        pdf_url = data.get("pdfUrl")
+        if not pdf_url:
+            return jsonify({"error": "Missing pdfUrl"}), 400
+        
+        logger.info(f"PDF URL: {pdf_url}")
+
+        pdf_url = pdf_url[5:]
+        
+
+        # Validate URL format
+        if not pdf_url.startswith(('http://', 'https://')):
+            return jsonify({"error": "Invalid URL format"}), 400
+        
+        logger.info("Converting PDF...")
+        
+
+
+        converter = ExportPDFToDOCX()
+
+        output_path = converter.convert_pdf_to_docx(pdf_url)
+
+        logger.info(f"Conversion completed. Output file: {output_path}")
+
+        # Check if file exists before sending
+        if not os.path.exists(output_path):
+            return jsonify({"error": "Conversion failed - output file not found"}), 500
+        
+        logger.info(f"Sending file: {output_path}")
+
+        return send_file(
+            output_path, 
+            as_attachment=True,
+            download_name=f"converted_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx",
+            mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        )
+
+    except Exception as e:
+        logging.exception("Error in convert_to_docx endpoint")
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
+
 
 @app.route('/health')
 def health_check():
