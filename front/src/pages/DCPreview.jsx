@@ -47,6 +47,7 @@ const DCPreview = () => {
     document.body.removeChild(link);
   };
 
+// Fonction handleWordDownload mise à jour dans DCPreview.jsx
 const handleWordDownload = async () => {
   if (!pdfFile) {
     alert("Fichier PDF non trouvé.");
@@ -57,23 +58,33 @@ const handleWordDownload = async () => {
 
   try {
     log("Downloading Word...");
-    const response = await axios.post(
+    
+    // Convertir l'URL blob en Blob
+    const response = await fetch(pdfFile);
+    const pdfBlob = await response.blob();
+    
+    // Créer FormData pour envoyer le fichier
+    const formData = new FormData();
+    formData.append('pdf_file', pdfBlob, `${nom || 'document'}.pdf`);
+    
+    // Envoyer le fichier au serveur
+    const convertResponse = await axios.post(
       "http://localhost:5000/convert-to-docx",
-      { pdfUrl: pdfFile },
+      formData,
       { 
         responseType: "blob",
-        timeout: 60000, // 60 seconds timeout
+        timeout: 120000, // 2 minutes timeout pour Adobe PDF Services
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'multipart/form-data'
         }
       }
     );
 
     log("Word downloaded successfully.");
 
-    // Check if response is actually a blob (successful conversion)
-    if (response.data instanceof Blob) {
-      const blob = new Blob([response.data], {
+    // Gérer la réponse réussie
+    if (convertResponse.data instanceof Blob) {
+      const blob = new Blob([convertResponse.data], {
         type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
 
@@ -86,29 +97,35 @@ const handleWordDownload = async () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      // Optional: Show success message
       console.log("Document Word téléchargé avec succès");
     } else {
-      throw new Error("Invalid response format");
+      throw new Error("Format de réponse invalide");
     }
 
   } catch (error) {
     console.error("Erreur lors du téléchargement Word:", error);
     
-    // Better error handling
+    // Gestion d'erreur améliorée
     if (error.response?.status === 400) {
-      alert("Erreur: URL PDF invalide ou données manquantes.");
+      const errorData = error.response.data;
+      if (errorData && errorData.error) {
+        alert(`Erreur: ${errorData.error}`);
+      } else {
+        alert("Erreur: Fichier PDF invalide ou données manquantes.");
+      }
     } else if (error.response?.status === 500) {
       alert("Erreur serveur lors de la conversion. Veuillez réessayer.");
     } else if (error.code === 'ECONNABORTED') {
       alert("Timeout: La conversion prend trop de temps. Veuillez réessayer.");
     } else {
-      alert("Échec de la génération du document Word. Veuillez vérifier votre connexion.");
+      alert("Échec de la génération du document Word. Veuillez vérifier votre connexion et réessayer.");
     }
   } finally {
     setIsDownloadingWord(false);
   }
 };
+
+
   const handleZoomIn = () => setScale((prev) => Math.min(prev + 0.2, 2.0));
   const handleZoomOut = () => setScale((prev) => Math.max(prev - 0.2, 0.6));
   const handleResetZoom = () => setScale(1.2);
