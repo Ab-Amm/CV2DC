@@ -225,74 +225,138 @@ function JsonEditorForm({ data = initialData, onChange }) {
                   updateFormData(newData);
                 }}
               />
-              <div className="experience-period-full">
+              <input
+                className="basic-input"
+                placeholder="Période"
+                value={exp.periode}
+                onChange={(e) => {
+                  const newData = JSON.parse(JSON.stringify(formData));
+                  newData.experience_professionnelle[i].periode =
+                    e.target.value;
+                  updateFormData(newData);
+                }}
+              />
+            </div>
+
+            {/* MISSION SECTION */}
+            {(exp.missions || []).map((mission, j) => (
+              <div key={j} className="mission-section">
+                <h5>Mission {j + 1}</h5>
                 <input
                   className="basic-input"
-                  placeholder="Période"
-                  value={exp.periode}
+                  placeholder="Titre de la mission"
+                  value={mission.titre_mission}
                   onChange={(e) => {
                     const newData = JSON.parse(JSON.stringify(formData));
-                    newData.experience_professionnelle[i].periode =
+                    newData.experience_professionnelle[i].missions[
+                      j
+                    ].titre_mission = e.target.value;
+                    updateFormData(newData);
+                  }}
+                />
+                <input
+                  className="basic-input"
+                  placeholder="Client"
+                  value={mission.client}
+                  onChange={(e) => {
+                    const newData = JSON.parse(JSON.stringify(formData));
+                    newData.experience_professionnelle[i].missions[j].client =
                       e.target.value;
                     updateFormData(newData);
                   }}
                 />
-              </div>
-              <div className="experience-description">
-                <h5>Descriptions</h5>
+                <input
+                  className="basic-input"
+                  placeholder="Période de mission"
+                  value={mission.periode_mission}
+                  onChange={(e) => {
+                    const newData = JSON.parse(JSON.stringify(formData));
+                    newData.experience_professionnelle[i].missions[
+                      j
+                    ].periode_mission = e.target.value;
+                    updateFormData(newData);
+                  }}
+                />
                 <div className="description-items">
-                  {Array.isArray(exp.description) &&
-                    exp.description.map((desc, j) => (
-                      <div key={j} className="description-item-row">
-                        <input
-                          className="basic-input"
-                          placeholder={`Description ${j + 1}`}
-                          value={desc}
-                          onChange={(e) => {
-                            const newData = JSON.parse(
-                              JSON.stringify(formData)
-                            );
-                            newData.experience_professionnelle[i].description[
-                              j
-                            ] = e.target.value;
-                            updateFormData(newData);
-                          }}
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-remove"
-                          onClick={() => {
-                            const newData = JSON.parse(
-                              JSON.stringify(formData)
-                            );
-                            newData.experience_professionnelle[
-                              i
-                            ].description.splice(j, 1);
-                            updateFormData(newData);
-                          }}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
+                  <h6>Descriptions</h6>
+                  {(mission.description || []).map((desc, k) => (
+                    <div key={k} className="description-item-row">
+                      <input
+                        className="basic-input"
+                        placeholder={`Description ${k + 1}`}
+                        value={desc}
+                        onChange={(e) => {
+                          const newData = JSON.parse(JSON.stringify(formData));
+                          newData.experience_professionnelle[i].missions[
+                            j
+                          ].description[k] = e.target.value;
+                          updateFormData(newData);
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-remove"
+                        onClick={() => {
+                          const newData = JSON.parse(JSON.stringify(formData));
+                          newData.experience_professionnelle[i].missions[
+                            j
+                          ].description.splice(k, 1);
+                          updateFormData(newData);
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
                   <button
                     type="button"
                     className="btn btn-add"
                     onClick={() => {
                       const newData = JSON.parse(JSON.stringify(formData));
-                      newData.experience_professionnelle[i].description.push(
-                        ""
-                      );
+                      newData.experience_professionnelle[i].missions[
+                        j
+                      ].description.push("");
                       updateFormData(newData);
                     }}
                   >
                     + Ajouter description
                   </button>
                 </div>
+                <button
+                  type="button"
+                  className="btn btn-remove"
+                  onClick={() => {
+                    const newData = JSON.parse(JSON.stringify(formData));
+                    newData.experience_professionnelle[i].missions.splice(j, 1);
+                    updateFormData(newData);
+                  }}
+                >
+                  × Supprimer mission
+                </button>
               </div>
-            </div>
+            ))}
+
+            <button
+              type="button"
+              className="btn btn-add"
+              onClick={() => {
+                const newData = JSON.parse(JSON.stringify(formData));
+                newData.experience_professionnelle[i].missions =
+                  newData.experience_professionnelle[i].missions || [];
+                newData.experience_professionnelle[i].missions.push({
+                  titre_mission: "",
+                  client: "",
+                  periode_mission: "",
+                  description: [],
+                });
+                updateFormData(newData);
+              }}
+            >
+              + Ajouter mission
+            </button>
           </div>
         ))}
+
         <button
           type="button"
           className="btn btn-primary"
@@ -301,7 +365,7 @@ function JsonEditorForm({ data = initialData, onChange }) {
               titre_poste: "",
               entreprise: "",
               periode: "",
-              description: [],
+              missions: [],
             })
           }
         >

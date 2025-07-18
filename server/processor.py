@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 import tempfile
 import logging
 from datetime import datetime
-from groq_parser import GroqCVParser
+from groq_parser import GeminiCVParser
 from flask_cors import CORS
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -64,7 +64,7 @@ def initialize_ocr():
     
     if cv_parser is None:
         logger.info("Initializing Groq parser...")
-        cv_parser = GroqCVParser()
+        cv_parser = GeminiCVParser()
         logger.info("Groq parser initialized successfully")
 
 def allowed_file(filename):
@@ -215,14 +215,14 @@ def process_cv_pdf(pdf_path, parse_with_groq=True):
                 initialize_ocr()  # This will also initialize cv_parser
             
             logger.info("Parsing CV with Groq...")
-            groq_result = cv_parser.parse_cv_text(final_text)
+            groq_result = cv_parser.parse_cv_with_fallback(final_text)
             response_data['groq_parsing'] = groq_result
             
             if groq_result['success']:
                 response_data['structured_cv'] = groq_result['data']
                 # Use the coordinated format_cv_data method
                 response_data['formatted_cv'] = cv_parser.format_cv_data(groq_result)
-                logger.info("Successfully formatted CV data for display")
+                logger.info("Successfully formatted CV data for display" + response_data['formatted_cv'])
             else:
                 logger.error(f"Groq parsing failed: {groq_result.get('error', 'Unknown error')}")
         
@@ -322,7 +322,6 @@ def process_dc():
 
         logger.info("PDF generated successfully")
         logger.info("pdf filename" + pdf_filename)
-        logger.info("pdf base64" + encoded_pdf)
 
         pdf_url = os.path.join('static', 'output', pdf_filename)
 

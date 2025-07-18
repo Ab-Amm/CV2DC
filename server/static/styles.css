@@ -13,14 +13,14 @@
 
 html,
 body {
-  width: 210mm;
+  width: 250mm;
   margin: 0;
   padding: 0;
   font-family: "Verdana", Arial, sans-serif;
   line-height: 1.5;
   color: black;
   background: white;
-  max-width: 210mm;
+  max-width: 300mm;
 }
 
 * {
@@ -53,7 +53,7 @@ body {
 /* Main Content */
 .main-content {
   background: #ffffff;
-  padding: 40px 50px 60px 20px;
+  padding: 40px 0 60px 20px;
   margin-left: 40px; /* Space for the purple strip */
   min-height: 237mm; /* A4 height minus footer space - remplace calc() */
   position: relative;
@@ -79,10 +79,16 @@ body {
 
 .expleo-brand {
   position: absolute;
-  top: -30px;
+  top: 0;
   right: 0;
   width: 150px;
   height: auto;
+}
+.expleo-brand svg {
+  display: block !important;
+  fill: #6846c7 !important;
+  width: 150px !important;
+  height: 30px !important;
 }
 
 .name {
@@ -100,19 +106,18 @@ body {
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  max-width: 500px;
 }
 
 /* Sections */
 .section {
   margin-bottom: 35px;
-  page-break-inside: avoid;
-  break-inside: avoid;
-  display: block;
 }
 
 .section-title {
-  font-size: 20px;
+  font-size: 23px;
   font-weight: bold;
+  
   color: black;
   margin-bottom: 20px;
   border-bottom: 1px solid #6846c7;
@@ -153,6 +158,31 @@ body {
   font-weight: normal;
 }
 
+
+.certifications-list {
+  margin-top: 10px;
+  list-style: none;
+  padding-left: 0;
+}
+
+.certifications-list li {
+  margin-bottom: 8px;
+  padding-left: 15px;
+  position: relative;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.certifications-list li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #000000;
+  font-weight: normal;
+}
+
+
 /* Experience */
 .experience-item {
   margin-bottom: 30px;
@@ -160,9 +190,7 @@ body {
   padding-left: 25px;
   display: flex;
   justify-content: space-between;
-  page-break-inside: avoid;
-  break-inside: avoid;
-  display: block;
+  align-items: center;
 }
 
 .experience-item:before {
@@ -192,6 +220,24 @@ body {
   font-weight: 600;
   margin-bottom: 5px;
 }
+
+.experience-item {
+  overflow: auto; 
+  margin-bottom: 30px;
+  padding-left: 25px;
+  position: relative;
+}
+
+.experience-date {
+  float: left;
+  width: 30%;
+}
+
+.experience-info {
+  float: right;
+  width: 65%;
+}
+
 
 .experience-title {
   font-size: 18px;
@@ -233,6 +279,79 @@ body {
   position: absolute;
   left: 0;
   color: black;
+}
+/* Client section styling */
+.client-section {
+  margin-bottom: 20px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.client-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #6846c7;
+  margin-bottom: 8px;
+  padding-left: 0;
+  line-height: 1.4;
+}
+
+.client-section .experience-tasks {
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.client-section .experience-tasks li {
+  margin-bottom: 6px;
+  padding-left: 15px;
+  position: relative;
+  font-size: 14px;
+  line-height: 1.4;
+  color: black;
+}
+
+.client-section .experience-tasks li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: black;
+  font-weight: normal;
+}
+.mission-section {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-left: 3px solid #6846c7;
+  background-color: #f9f9f9;
+}
+
+.mission-header {
+  margin-bottom: 8px;
+}
+
+.mission-title {
+  font-weight: bold;
+  color: #333;
+}
+
+.mission-client {
+  color: #6846c7;
+  font-size: 0.9em;
+  margin-top: 2px;
+}
+
+.mission-period {
+  color: #666;
+  font-size: 0.85em;
+  font-style: italic;
+}
+
+.mission-tasks {
+  margin-top: 8px;
+  padding-left: 20px;
+}
+
+.mission-tasks li {
+  margin-bottom: 3px;
 }
 
 /* Education */

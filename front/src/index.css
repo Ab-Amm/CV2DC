@@ -377,7 +377,396 @@ body {
   box-shadow: var(--shadow-lg);
 }
 
+
+/* Experience Form Styles */
+.experience-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* Field Styles */
+.experience-form input,
+.experience-form textarea {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--primary-200);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-family: inherit;
+  background-color: #fff;
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.2s ease;
+}
+
+.experience-form input:focus,
+.experience-form textarea:focus {
+  border-color: var(--primary-500);
+  outline: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Label Styling */
+.experience-form label {
+  font-weight: 600;
+  color: var(--primary-700);
+  margin-bottom: var(--spacing-sm);
+  display: block;
+  font-size: 0.875rem;
+}
+
+/* Each Experience Entry */
+.experience-entry {
+  border: 2px solid var(--primary-100);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  background: #fff;
+  box-shadow: var(--shadow-xs);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.experience-entry:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-300);
+}
+
+/* Remove Button Position */
+.experience-entry .btn-remove {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+}
+
+/* Add Button Styling */
+.experience-form .btn-add {
+  align-self: flex-start;
+}
+
+/* Form Grouping */
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .experience-entry .form-group-inline {
+    display: flex;
+    gap: var(--spacing-lg);
+  }
+
+  .experience-entry .form-group-inline .form-group {
+    flex: 1;
+  }
+}
+
+/* Mission Section Styling */
+.mission-section {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid var(--primary-200);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-md) 0;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.mission-section:hover {
+  border-color: var(--primary-300);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.mission-section::before {
+  content: "🎯";
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  font-size: 1.25rem;
+  opacity: 0.7;
+}
+
+.mission-section h5 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary-700);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--primary-200);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.mission-section h5::before {
+  content: "📋";
+  font-size: 1rem;
+}
+
+/* Mission Input Fields */
+.mission-section .basic-input {
+  margin-bottom: var(--spacing-md);
+  background: white;
+  border: 2px solid var(--primary-200);
+  transition: all 0.2s ease;
+}
+
+.mission-section .basic-input:focus {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 4px var(--primary-100);
+  background: var(--primary-50);
+}
+
+/* Description Items Styling */
+.description-items {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  border: 1px solid var(--primary-200);
+  margin-top: var(--spacing-md);
+}
+
+.description-items h6 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary-700);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--primary-200);
+}
+
+.description-items h6::before {
+  content: "📝";
+  font-size: 1rem;
+}
+
+.description-item-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--primary-50);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--primary-100);
+  transition: all 0.2s ease;
+}
+
+.description-item-row:hover {
+  background: white;
+  border-color: var(--primary-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.description-item-row input {
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.description-item-row input:focus {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 2px var(--primary-100);
+  outline: none;
+}
+
+/* Mission Remove Button */
+.mission-section > .btn-remove {
+  position: absolute;
+  top: var(--spacing-md);
+  right: calc(var(--spacing-md) + 2rem);
+  background: var(--error);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+
+.mission-section > .btn-remove:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Add Mission Button */
+.experience-section .btn-add {
+  background: var(--success);
+  color: white;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  margin-top: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.experience-section .btn-add:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.experience-section .btn-add::before {
+  content: "➕";
+  font-size: 0.875rem;
+}
+
+/* Experience Section Enhancements */
+.experience-section {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  border: 2px solid var(--primary-200);
+  position: relative;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.experience-section:hover {
+  border-color: var(--primary-300);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.experience-section::before {
+  content: "💼";
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  font-size: 1.5rem;
+  opacity: 0.6;
+}
+
+/* Experience Grid Enhancements */
+.experience-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.experience-grid .basic-input {
+  background: var(--primary-50);
+  border: 2px solid var(--primary-200);
+  transition: all 0.2s ease;
+}
+
+.experience-grid .basic-input:focus {
+  background: white;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 4px var(--primary-100);
+}
+
+/* Experience Header Enhancements */
+.experience-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--primary-200);
+}
+
+.experience-number {
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+.experience-number::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  z-index: -1;
+  opacity: 0.3;
+}
+
+/* Responsive Design for Mission Section */
+@media (max-width: 768px) {
+  .experience-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .mission-section {
+    padding: var(--spacing-md);
+  }
+  
+  .mission-section > .btn-remove {
+    position: static;
+    margin-top: var(--spacing-md);
+    width: 100%;
+  }
+  
+  .description-item-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .description-item-row .btn-remove {
+    align-self: flex-end;
+    margin-top: var(--spacing-sm);
+  }
+}
+
+/* Animation for new missions */
+.mission-section {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Focus states for accessibility */
+.mission-section .btn-remove:focus,
+.experience-section .btn-add:focus {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+
 /* Experience Section */
+
+
 .experience-section {
   background: white;
   border-radius: var(--radius-xl);
