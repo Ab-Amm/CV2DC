@@ -16,7 +16,6 @@ from flask_cors import CORS
 from flask_cors import CORS
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
-from weasyprint import HTML
 from ExportPDFToDOCX import ExportPDFToDOCX
 load_dotenv()
 
@@ -78,7 +77,7 @@ def pdf_to_images(pdf_path, dpi=300):
         logger.info(f"Converting PDF to images: {pdf_path}")
         images = convert_from_path(pdf_path, 
                                    dpi=dpi, 
-                                   poppler_path=os.getenv("POPPLER_PATH"))
+                                  poppler_path="/usr/bin")
         logger.info(f"Successfully converted {len(images)} page(s)")
         return images
     except Exception as e:
@@ -278,7 +277,7 @@ def process_pdf():
     
 
 import pdfkit
-config = pdfkit.configuration(wkhtmltopdf=os.getenv("PDF_PATH"))
+config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
 
 

@@ -1,0 +1,27 @@
+
+services:
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    container_name: flask-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./server:/processor
+
+    environment:
+      - FLASK_ENV=development
+    env_file:
+      - ./server/.env
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: react-frontend
+    ports:
+      - "3000:80"
