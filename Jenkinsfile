@@ -10,7 +10,7 @@ pipeline {
 
     stage('Cloner le projet') {
       steps {
-         url: 'https://github.com/Ab-Amm/CV2DC.git'
+        git url: 'https://github.com/Ab-Amm/CV2DC.git'
       }
     }
 
