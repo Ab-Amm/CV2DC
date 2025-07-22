@@ -33,7 +33,18 @@ pipeline {
         }
       }
     }
+    
 
+    stage('Créer .env') {
+      steps {
+        writeFile file: 'server/.env', text: '''
+FLASK_ENV=development
+PORT=5000
+'''
+      }
+    }
+
+    
     stage('Lancer Docker Compose') {
       steps {
         bat 'docker-compose down || exit 0'
