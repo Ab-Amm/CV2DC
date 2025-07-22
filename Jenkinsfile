@@ -36,8 +36,8 @@ pipeline {
 
     stage('Lancer Docker Compose') {
       steps {
-        sh 'docker-compose down || true'
-        sh 'docker-compose up -d'
+        bat 'docker-compose down || exit 0'
+        bat 'docker-compose up -d'
       }
     }
 
