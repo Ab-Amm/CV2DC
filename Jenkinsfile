@@ -10,13 +10,13 @@ pipeline {
 
     stage('Cloner le projet') {
       steps {
-        git credentialsId: 'github-token-id', url: 'https://github.com/Ab-Amm/CV2DC.git'
+         url: 'https://github.com/Ab-Amm/CV2DC.git'
       }
     }
 
     stage('Build Backend Docker') {
       steps {
-        dir('backend') {
+        dir('server') {
           script {
             docker.build(env.BACK_IMAGE, '.')
           }
@@ -26,7 +26,7 @@ pipeline {
 
     stage('Build Frontend Docker') {
       steps {
-        dir('frontend') {
+        dir('front') {
           script {
             docker.build(env.FRONT_IMAGE, '.')
           }
