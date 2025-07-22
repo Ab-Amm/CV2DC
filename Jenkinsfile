@@ -44,10 +44,10 @@ PORT=5000
       }
     }
 
-    
+
     stage('Lancer Docker Compose') {
       steps {
-        bat 'docker-compose down || exit 0'
+        bat 'docker-compose down --remove-orphans'
         bat 'docker-compose up -d'
       }
     }
