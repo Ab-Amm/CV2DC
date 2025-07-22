@@ -44,10 +44,16 @@ PORT=5000
       }
     }
 
+    stage('Nettoyer les anciens conteneurs') {
+      steps {
+        bat 'docker rm -f react-frontend flask-backend || exit 0'
+      }
+    }
 
+    
     stage('Lancer Docker Compose') {
       steps {
-        bat 'docker-compose down --remove-orphans'
+        bat 'docker-compose down || exit 0'
         bat 'docker-compose up -d'
       }
     }
