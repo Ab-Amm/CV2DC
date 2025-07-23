@@ -73,7 +73,7 @@ PORT=5000
    stage('Analyse SonarQube Frontend') {
     steps {
       dir('front') { // adapte le dossier si ton frontend est ailleurs
-        withSonarQubeEnv('SonarQube') {
+        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
           // Run tests + coverage
           bat 'npm install'
           // Scanner Sonar avec couverture
