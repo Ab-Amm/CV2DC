@@ -50,13 +50,6 @@ PORT=5000
       }
     }
 
-    
-    stage('Lancer Docker Compose') {
-      steps {
-        bat 'docker-compose down || exit 0'
-        bat 'docker-compose up -d'
-      }
-    }
 
     stage('Tests') {
       steps {
@@ -64,6 +57,26 @@ PORT=5000
         echo "Running tests..."
       }
     }
+    
+    stage('Analyse SonarQube Backend') {
+      steps {
+        dir('server') {
+          withSonarQubeEnv('SonarQube') {
+            bat 'sonar-scanner'
+          }
+        }
+      }
+    }
+
+
+    stage('Lancer Docker Compose') {
+      steps {
+        bat 'docker-compose down || exit 0'
+        bat 'docker-compose up -d'
+      }
+    }
+
+    
 
   }
 
