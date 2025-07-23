@@ -1,5 +1,7 @@
 "use client";
 
+import PropTypes from 'prop-types';
+
 function CompanyHeader({ nom }) {
   return (
     <header className="company-header">
@@ -21,5 +23,10 @@ function CompanyHeader({ nom }) {
     </header>
   );
 }
+
+CompanyHeader.propTypes = {
+  nom: PropTypes.string.isRequired, // ou PropTypes.string si "nom" n'est pas obligatoire
+};
+
 
 export default CompanyHeader;
