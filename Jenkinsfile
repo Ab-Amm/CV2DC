@@ -69,6 +69,22 @@ PORT=5000
       }
     }
 
+   
+   stage('Analyse SonarQube Frontend') {
+    steps {
+      dir('front') { // adapte le dossier si ton frontend est ailleurs
+        withSonarQubeEnv('SonarQube') {
+          // Run tests + coverage
+          bat 'npm install'
+          bat 'npm run test -- --coverage --watchAll=false'
+
+          // Scanner Sonar avec couverture
+          bat 'sonar-scanner'
+        }
+      }
+    }
+  }
+
 
     stage('Lancer Docker Compose') {
       steps {
