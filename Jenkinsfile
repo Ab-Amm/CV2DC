@@ -58,17 +58,12 @@ PORT=5000
       }
     }
     
-     stages {
-      stage('Test PATH') {
-        steps {
-          bat 'where sonar-scanner'
-        }
-      }
-     }   
+       
     stage('Analyse SonarQube Backend') {
       steps {
         dir('server') {
           withSonarQubeEnv('SonarQube')  {
+            bat '"C:\\Users\\DELL PRECISION\\Downloads\\sonar-scanner-cli-7.1.0.4889-windows-x64\\sonar-scanner-7.1.0.4889-windows-x64\\bin\\sonar-scanner.bat"'
             bat 'sonar-scanner'
           }
         }
