@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+
 "use client";
 
 function CompanyHeader({ nom }) {
@@ -23,8 +23,6 @@ function CompanyHeader({ nom }) {
   );
 }
 
-CompanyHeader.propTypes = {
-  nom: PropTypes.string,
-};
+
 
 export default CompanyHeader;
