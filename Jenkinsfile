@@ -58,10 +58,17 @@ PORT=5000
       }
     }
     
+     stages {
+      stage('Test PATH') {
+        steps {
+          bat 'where sonar-scanner'
+        }
+      }
+     }   
     stage('Analyse SonarQube Backend') {
       steps {
         dir('server') {
-          withSonarQubeEnv('SonarQube') {
+          withSonarQubeEnv('SonarQube')  {
             bat 'sonar-scanner'
           }
         }
