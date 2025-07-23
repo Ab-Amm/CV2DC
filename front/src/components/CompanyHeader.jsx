@@ -25,7 +25,7 @@ function CompanyHeader({ nom }) {
 }
 
 CompanyHeader.propTypes = {
-  nom: PropTypes.string.isRequired, // ou PropTypes.string si "nom" n'est pas obligatoire
+  nom: PropTypes.string.isRequired,
 };
 
 

@@ -239,7 +239,7 @@ const handleWordDownload = async () => {
             </button>
             <div className="download-buttons">
               <button className="btn btn-primary" onClick={handleDownload}>
-                <span className="download-icon">📥</span>
+                <span className="download-icon">📥</span>{" "}
                 Télécharger PDF
               </button>
               <button 
