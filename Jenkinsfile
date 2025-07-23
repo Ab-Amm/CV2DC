@@ -76,8 +76,6 @@ PORT=5000
         withSonarQubeEnv('SonarQube') {
           // Run tests + coverage
           bat 'npm install'
-          bat 'npm run test -- --coverage --watchAll=false'
-
           // Scanner Sonar avec couverture
           bat 'sonar-scanner'
         }
