@@ -1,4 +1,3 @@
-
 "use client";
 
 function CompanyHeader({ nom }) {
@@ -22,7 +21,5 @@ function CompanyHeader({ nom }) {
     </header>
   );
 }
-
-
 
 export default CompanyHeader;
