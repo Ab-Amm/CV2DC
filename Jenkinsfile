@@ -6,6 +6,10 @@ pipeline {
     FRONT_IMAGE = "react-frontend:latest"
   }
 
+   triggers {
+      githubPush() 
+    }
+
   stages {
 
     stage('Cloner le projet') {
