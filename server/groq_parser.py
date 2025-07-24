@@ -7,7 +7,7 @@ from typing import Dict, Any, Optional
 from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-# teste web hook
+
 # Load environment variables from .env file
 load_dotenv()
 # Configure logging
