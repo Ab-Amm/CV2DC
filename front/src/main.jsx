@@ -6,6 +6,11 @@ import EditFile from "./pages/EditFile";
 import DCPreview from "./pages/DCPreview.jsx";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
+
+
+
+
+
 const router = createBrowserRouter([
   {
     path: "/",
