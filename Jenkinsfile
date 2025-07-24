@@ -6,9 +6,9 @@ pipeline {
     FRONT_IMAGE = "react-frontend:latest"
   }
 
-   triggers {
+  triggers {
       githubPush() 
-    }
+  }
 
   stages {
 
