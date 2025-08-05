@@ -20,8 +20,9 @@ sonarqube_backend:
     - sonar-scanner \
         -Dsonar.projectKey=CV2DCgitlab \
         -Dsonar.sources=. \
-        -Dsonar.host.url=http://http://localhost:9000\
+        -Dsonar.host.url=http://localhost:9000 \
         -Dsonar.login=$SONAR_TOKEN
+
   only:
     - docx
     - merge_requests
