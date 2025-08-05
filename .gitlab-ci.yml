@@ -17,11 +17,7 @@ sonarqube_backend:
     GIT_DEPTH: "0"  # important pour que l'analyse ait accès à l’historique git
   script:
     - cd server
-    - sonar-scanner \
-        -Dsonar.projectKey=CV2DCgitlab \
-        -Dsonar.sources=. \
-        -Dsonar.host.url=http://localhost:9000 \
-        -Dsonar.login=$SONAR_TOKEN
+    - sonar-scanner -Dsonar.projectKey=CV2DCgitlab -Dsonar.sources=. -Dsonar.host.url=http://localhost:9000 -Dsonar.login=$SONAR_TOKEN
 
   only:
     - docx
