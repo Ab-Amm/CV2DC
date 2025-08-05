@@ -4,8 +4,30 @@ variables:
   IMAGE_TAG: latest
 
 stages:
+  - sonar
   - build
   - deploy
+
+
+
+sonarqube_backend:
+  stage: sonar
+  image: sonarsource/sonar-scanner-cli:latest
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # cache
+    GIT_DEPTH: "0"  # important pour que l'analyse ait accès à l’historique git
+  script:
+    - cd server
+    - sonar-scanner \
+        -Dsonar.projectKey=CV2DCgitlab \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=http://<adresse-ip-ou-localhost>:9000 \
+        -Dsonar.login=$SONAR_TOKEN
+  only:
+    - docx
+    - merge_requests
+
+
 
 build_images:
   stage: build
