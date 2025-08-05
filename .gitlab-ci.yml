@@ -1,0 +1,34 @@
+variables:
+  FRONT_IMAGE_NAME: abamm209/cv2dc-frontend
+  BACK_IMAGE_NAME: abamm209/cv2dc-backend
+  IMAGE_TAG: latest
+
+stages:
+  - build
+  - deploy
+
+build_images:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  before_script:
+    - docker login -u $REGISTRY_USER -p $REGISTRY_PASS
+  script:
+    - docker build -t $FRONT_IMAGE_NAME:$IMAGE_TAG ./frontend
+    - docker build -t $BACK_IMAGE_NAME:$IMAGE_TAG ./backend
+    - docker push $FRONT_IMAGE_NAME:$IMAGE_TAG
+    - docker push $BACK_IMAGE_NAME:$IMAGE_TAG
+
+deploy:
+  stage: deploy
+  before_script:
+    - chmod 400 $SSH_KEY
+  script:
+    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY root@161.35.223.117 "
+        docker login -u $REGISTRY_USER -p $REGISTRY_PASS &&
+        cd /path/to/your/app &&
+        docker-compose pull &&
+        docker-compose down &&
+        docker-compose up -d
+      "
