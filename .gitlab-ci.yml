@@ -20,6 +20,10 @@ build_images:
     - docker push $FRONT_IMAGE_NAME:$IMAGE_TAG
     - docker push $BACK_IMAGE_NAME:$IMAGE_TAG
 
+
+
+
+
 deploy:
   stage: deploy
   before_script:
