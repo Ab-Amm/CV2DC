@@ -1,41 +1,27 @@
-# Base image
+# Step 1: Lightweight base
 FROM python:3.11-slim
 
 WORKDIR /processor
 
-# System dependencies (for pdf2image, pdfkit, fonts, Adobe SDK)
-RUN apt-get update && apt-get install -y \
+# Step 2: Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     poppler-utils \
-    xfonts-base \
-    xfonts-75dpi \
-    wget \
-    fontconfig \
-    libxrender1 \
-    libjpeg62-turbo \
-    libxtst6 \
-    libx11-6 \
-    libxext6 \
-    libssl-dev \
-    libglib2.0-0 \
-    libsm6 \
-    libxrender-dev \
-    libfontconfig1 \
-    fonts-dejavu \
-    tesseract-ocr \
     wkhtmltopdf \
-    openjdk-17-jre-headless \
-    && apt-get clean
+    fonts-dejavu \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Step 3: Install CPU-only torch and torchvision (no audio needed)
+RUN pip install --no-cache-dir torch==2.2.1 torchvision==0.17.1 --index-url https://download.pytorch.org/whl/cpu
+
+# Step 4: Install Python dependencies
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend code and credentials
+# Step 5: Copy app source code
 COPY . .
 
-# Set environment variable for Adobe PDF Services credentials
 ENV PDF_SERVICES_CREDENTIALS_PATH=/processor/pdftools-api-credentials.json
 
 EXPOSE 5000
-
 CMD ["python", "processor.py"]
